@@ -25,7 +25,10 @@ export default class App extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = {}
+    this.state = {
+      offersCount: null,
+      minPrice: '-'
+    }
   }
   getOffers () {
     xhrPromise('GET', url).then(response => {
@@ -33,11 +36,20 @@ export default class App extends React.Component {
       const bodyContent = cleanResponse(response)
       console.log(bodyContent)
       const offers = extract[service](bodyContent)
+      let formattedOffers = []
 
-      for (let i = 0, len = 1/* offers.length */; i < len; i++) {
+      for (let i = 0, len = offers.length; i < len; i++) {
         const offerDOM = offers[i]
-        console.log(makeOffer[service](offerDOM))
+        formattedOffers.push(makeOffer[service](offerDOM))
       }
+
+      const minPrice = Math.min(...formattedOffers.map(offer => offer.price))
+
+      console.log(formattedOffers)
+      this.setState({
+        offersCount: formattedOffers.length,
+        minPrice: minPrice
+      })
     }).catch(reason => {
       console.log('Xhr error (' + reason + ')')
     })
@@ -48,10 +60,15 @@ export default class App extends React.Component {
 
   render () {
     return (
-      <article>
-        <h1>Hi from DummyComponent.</h1>
-        <em>Now let's play with React!</em>
-      </article>
+      <div>
+        <strong>Offers Count: {this.state.offersCount}</strong>
+        <strong>Min price: {this.state.minPrice}</strong>
+        <article>
+          <h1>Hi from DummyComponent.</h1>
+          <em>Now let's play with React!</em>
+        </article>
+      </div>
+
     )
   }
 }
