@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const defaultWrapStyle = {
   display: 'grid',
@@ -36,6 +37,12 @@ const Offer = props => {
       <span style={areaStyle}>Area: {props.area}</span>
     </div>
   )
+}
+
+Offer.propTypes = {
+  href: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  read: PropTypes.bool.isRequired
 }
 
 export default Offer
