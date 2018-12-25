@@ -1,7 +1,8 @@
-import xhrPromise from './Xhr/xhr'
-import cleanResponse from './Xhr/Data'
-import extract from './Offers/extract'
-import makeOffer from './Offer/makeOffer'
+import xhrPromise from './components/Xhr/xhr'
+import cleanResponse from './components/Xhr/Data'
+import extract from './components/Model/Offers/extract'
+import makeOffer from './components/Model/Offer/makeOffer'
+import OffersList from './components/OffersList'
 import React from 'react'
 
 // even though Rollup is bundling all your files together, errors and
@@ -27,7 +28,8 @@ export default class App extends React.Component {
 
     this.state = {
       offersCount: null,
-      minPrice: '-'
+      minPrice: '-',
+      offersList: []
     }
   }
   getOffers () {
@@ -44,11 +46,15 @@ export default class App extends React.Component {
       }
 
       const minPrice = Math.min(...formattedOffers.map(offer => offer.price))
+      // const offersList = <OffersList offers={formattedOffers} />
+      // console.log(offersList)
 
       console.log(formattedOffers)
       this.setState({
         offersCount: formattedOffers.length,
-        minPrice: minPrice
+        minPrice: minPrice,
+        offersList: formattedOffers
+
       })
     }).catch(reason => {
       console.log('Xhr error (' + reason + ')')
@@ -64,9 +70,13 @@ export default class App extends React.Component {
         <strong>Offers Count: {this.state.offersCount}</strong>
         <strong>Min price: {this.state.minPrice}</strong>
         <article>
-          <h1>Hi from DummyComponent.</h1>
-          <em>Now let's play with React!</em>
+          {
+            this.state.offersList.length ? (
+              <OffersList offers={this.state.offersList} />
+            ) : ''
+          }
         </article>
+
       </div>
 
     )

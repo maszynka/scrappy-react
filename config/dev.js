@@ -12,6 +12,11 @@ export default {
     format: 'iife'
   },
   plugins: [
+    resolve({
+      extensions: [ '.mjs', '.js', '.jsx', '.json' ],
+      browser: true,
+      main: true
+    }),
     babel({
       babelrc: false,
       exclude: 'node_modules/**',
@@ -30,11 +35,8 @@ export default {
       ]
     }),
     globals(),
-    replace({ 'process.env.NODE_ENV': JSON.stringify('development') }),
-    resolve({
-      browser: true,
-      main: true
-    })
+    replace({ 'process.env.NODE_ENV': JSON.stringify('development') })
+
   ],
   sourcemap: true
 }
