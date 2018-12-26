@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import respondToVisibility from './UI/Helpers/respondToVisibility'
 
 const defaultWrapStyle = {
   display: 'grid',
@@ -21,28 +22,38 @@ const areaStyle = {
   gridColumn: '2 / 2'
 }
 
-const Offer = props => {
-  console.log(props.read)
-  const wrapStyle = props.read ? defaultWrapStyle : (
-    Object.assign({},
-      defaultWrapStyle,
-      { fontSize: '1.5rem' }
+class Offer extends React.Component {
+  constructor (props) {
+    super(props)
+    this.wrapStyle = props.read ? defaultWrapStyle : (
+      Object.assign({},
+        defaultWrapStyle,
+        { fontSize: '1.5rem' }
+      )
     )
-  )
+    this.wrapRef = React.createRef()
+    respondToVisibility(this.wrapRef, (v) => {
+      console.log(v)
+    })
+  }
 
-  return (
-    <div style={wrapStyle}>
-      <a style={titleStyle} href={props.href}><h5>{props.title}</h5></a>
-      <span style={priceStyle}>Cena: {props.price} PLN</span>
-      <span style={areaStyle}>Area: {props.area}</span>
-    </div>
-  )
+  render () {
+    return (
+      <div style={this.wrapStyle} ref={this.wrapRef}>
+        <a style={titleStyle} href={this.props.href}><h5>{this.props.title}</h5></a>
+        <span style={priceStyle}>Cena: {this.props.price} PLN</span>
+        <span style={areaStyle}>Area: {this.props.area}</span>
+      </div>
+    )
+  }
 }
 
 Offer.propTypes = {
   href: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  read: PropTypes.bool.isRequired
+  read: PropTypes.bool.isRequired,
+  price: PropTypes.string.isRequired,
+  area: PropTypes.string.isRequired
 }
 
 export default Offer
