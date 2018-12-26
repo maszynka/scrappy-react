@@ -37,23 +37,23 @@ export default class App extends React.Component {
       const service = 'otodom'
       const bodyContent = cleanResponse(response)
       console.log(bodyContent)
-      const offers = extract[service](bodyContent)
-      let formattedOffers = []
+      const _offersDOM = extract[service](bodyContent)
+      let offers = []
 
-      for (let i = 0, len = offers.length; i < len; i++) {
-        const offerDOM = offers[i]
-        formattedOffers.push(makeOffer[service](offerDOM))
+      for (let i = 0, len = _offersDOM.length; i < len; i++) {
+        const offerDOM = _offersDOM[i]
+        offers.push(makeOffer[service](offerDOM))
       }
 
-      const minPrice = Math.min(...formattedOffers.map(offer => offer.price))
+      const minPrice = Math.min(...offers.map(offer => offer.price))
       // const offersList = <OffersList offers={formattedOffers} />
       // console.log(offersList)
 
-      console.log(formattedOffers)
+      console.log(offers)
       this.setState({
-        offersCount: formattedOffers.length,
+        offersCount: offers.length,
         minPrice: minPrice,
-        offersList: formattedOffers
+        offersList: offers
 
       })
     }).catch(reason => {
@@ -62,6 +62,21 @@ export default class App extends React.Component {
   }
   componentDidMount () {
     this.getOffers()
+  }
+
+  updateOffers (offers) {
+    console.log(offers)
+    let currentStore = window.localStorage.offers
+    console.log(currentStore)
+    let newOffers = offers.filter(
+      (obj) => currentStore.indexOf(obj) === -1
+    )
+    console.log(newOffers)
+
+    if (newOffers.length) {
+      currentStore.unshift(newOffers)
+      window.localStorage.offers = currentStore
+    }
   }
 
   render () {

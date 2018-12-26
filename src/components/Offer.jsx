@@ -31,15 +31,27 @@ class Offer extends React.Component {
         { fontSize: '1.5rem' }
       )
     )
-    this.wrapRef = React.createRef()
-    respondToVisibility(this.wrapRef, (v) => {
-      console.log(v)
-    })
+
+    this.wrap = null
+
+    this.wrapRef = element => {
+      this.wrap = element
+    }
+  }
+
+  componentDidMount () {
+    // autofocus the input on mount
+    window.requestAnimationFrame(() => (
+        respondToVisibility(this.wrap, (v) => {
+          console.log(v)
+        })
+      )
+    )
   }
 
   render () {
     return (
-      <div style={this.wrapStyle} ref={this.wrapRef}>
+      <div style={this.wrapStyle} ref={this.wrapRef} className='was-read'>
         <a style={titleStyle} href={this.props.href}><h5>{this.props.title}</h5></a>
         <span style={priceStyle}>Cena: {this.props.price} PLN</span>
         <span style={areaStyle}>Area: {this.props.area}</span>
