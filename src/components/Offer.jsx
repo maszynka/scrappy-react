@@ -42,10 +42,10 @@ class Offer extends React.Component {
   componentDidMount () {
     // autofocus the input on mount
     window.requestAnimationFrame(() => (
-        respondToVisibility(this.wrap, (v) => {
-          console.log(v)
-        })
-      )
+      respondToVisibility(this.wrap, (v) => {
+        console.log(v)
+      })
+    )
     )
   }
 
