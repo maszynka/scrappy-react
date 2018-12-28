@@ -25,6 +25,10 @@ const areaStyle = {
 class Offer extends React.Component {
   constructor (props) {
     super(props)
+    this.state = {
+      wasRead: false
+    }
+
     this.wrapStyle = props.read ? defaultWrapStyle : (
       Object.assign({},
         defaultWrapStyle,
@@ -51,7 +55,7 @@ class Offer extends React.Component {
 
   render () {
     return (
-      <div style={this.wrapStyle} ref={this.wrapRef} className='was-read'>
+      <div style={this.wrapStyle} ref={this.wrapRef} className={this.state.wasRead ? 'was-read' : ''}>
         <a style={titleStyle} href={this.props.href}><h5>{this.props.title}</h5></a>
         <span style={priceStyle}>Cena: {this.props.price} PLN</span>
         <span style={areaStyle}>Area: {this.props.area}</span>

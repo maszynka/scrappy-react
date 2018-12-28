@@ -11,7 +11,12 @@ export const makeOffer = offerDOM => ({
   price: offerDOM.querySelector('.offer-item-price').innerText.replace(/\D/g, ''),
   href: offerDOM.dataset.url,
   area: offerDOM.querySelector('.offer-item-area').innerText.replace(/\D/g, ''),
-  read: false
+  ui: {
+    new: true,
+    visited: false,
+    read: false,
+    modified: null
+  }
 })
 
 export default {

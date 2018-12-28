@@ -1,7 +1,7 @@
 import { extractOffers as extractOfferOtodom } from '../Service/otodom'
 
-const extract = {
+const extractDOM = {
   otodom: extractOfferOtodom
 }
 
-export default extract
+export default extractDOM
