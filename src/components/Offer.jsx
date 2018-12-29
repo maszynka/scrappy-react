@@ -4,7 +4,7 @@ import respondToVisibility from './UI/Helpers/respondToVisibility'
 
 const defaultWrapStyle = {
   display: 'grid',
-  fontSize: '1.2rem',
+  fontSize: '1.2r em',
   gridTemplateColumns: '1fr 1fr',
   gridTemplateRows: '1.5em, 1em'
 }
@@ -67,7 +67,7 @@ class Offer extends React.Component {
 Offer.propTypes = {
   href: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  read: PropTypes.bool.isRequired,
+  ui: PropTypes.object.isRequired,
   price: PropTypes.string.isRequired,
   area: PropTypes.string.isRequired
 }
