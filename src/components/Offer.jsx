@@ -26,7 +26,9 @@ class Offer extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      wasRead: false
+      wasRead: false,
+      clicked: false,
+      titleStyle: titleStyle
     }
 
     this.wrapStyle = props.read ? defaultWrapStyle : (
@@ -43,6 +45,42 @@ class Offer extends React.Component {
     }
   }
 
+  handle () {
+    return {
+      click: event => {
+        console.log('smth')
+        // event.stopPropagation()
+        this.setState({
+          clicked: true,
+          titleStyle: Object.assign(
+            {},
+            this.state.titleStyle,
+            {
+              color: 'yellow'
+            })
+        }, event => {
+
+        })
+      }
+    }
+  }
+
+  handleClick (event) {
+    console.log('smth')
+    event.stopPropagation()
+    this.setState({
+      clicked: true,
+      titleStyle: Object.assign(
+        {},
+        this.state.titleStyle,
+        {
+          color: 'yellow'
+        })
+    }, event => {
+
+    })
+  }
+
   componentDidMount () {
     // autofocus the input on mount
     window.requestAnimationFrame(() => (
@@ -56,7 +94,7 @@ class Offer extends React.Component {
   render () {
     return (
       <div style={this.wrapStyle} ref={this.wrapRef} className={this.state.wasRead ? 'was-read' : ''}>
-        <a style={titleStyle} href={this.props.href}><h5>{this.props.title}</h5></a>
+        <a className={this.state.clicked ? 'clicked' : ''} style={this.state.titleStyle} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'><h5>{this.props.title}</h5></a>
         <span style={priceStyle}>Cena: {this.props.price} PLN</span>
         <span style={areaStyle}>Area: {this.props.area}</span>
       </div>

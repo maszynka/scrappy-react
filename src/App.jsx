@@ -33,18 +33,13 @@ export default class App extends React.Component {
     }
   }
 
-  getOffers () {
-    const testingUrl = `https://www.otodom.pl/wynajem/mieszkanie/wroclaw/?search%5Bdist%5D=0&search%5Bsubregion_id%5D=381&search%5Bcity_id%5D=39&search%5Bpaidads_listing%5D=1`
-    xhrPromise('GET', testingUrl).then(response => {
+  getOffers (url) {
+    xhrPromise('GET', url).then(response => {
       const testingServiceName = 'otodom'
       let fetchedOffers = prepareOffers(response, testingServiceName)
       const initial = !this.state.offersList.length
 
-      console.log(this.state.offersList)
-
       const callbackAfterTest = () => {
-        console.log(this.state.offersList)
-
         let newOffers = !initial ? mergeNew(
           fetchedOffers,
           this.state.offersList
@@ -76,9 +71,12 @@ export default class App extends React.Component {
   }
 
   componentDidMount () {
-    this.getOffers()
+    const otodom1 = `http://localhost:7779/otodom1`
+    const otodom2 = `http://localhost:7779/otodom2`
+
+    this.getOffers(otodom1)
     window.setTimeout(() => {
-      this.getOffers()
+      this.getOffers(otodom2)
     }, 2000)
   }
 

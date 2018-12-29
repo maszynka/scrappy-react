@@ -5,14 +5,11 @@ import Offer from './Offer'
 class OffersList extends React.Component {
   constructor (props) {
     super(props)
-    console.log(this.props)
     this.state = {
       offers: typeof Array.isArray(this.props.offers) && (
         this.listOffers(this.props.offers)
       )
     }
-
-    console.log(this.props)
   }
 
   // componentDidMount () {

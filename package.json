@@ -26,6 +26,7 @@
   "dependencies": {
     "babel-eslint": "^10.0.1",
     "eslint-config-standard-react": "^7.0.2",
+    "inert": "^5.1.2",
     "react": "16.2.0",
     "react-dom": "16.2.0"
   },
@@ -36,6 +37,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "browser-sync": "2.18.13",
+    "hapi": "^17.8.1",
     "npm-run-all": "4.1.2",
     "rollup": "0.52.0",
     "rollup-plugin-babel": "3.0.2",
@@ -60,11 +62,13 @@
     "test": "npm run build:dev",
     "preversion": "git pull && npm up && npm run std --silent",
     "version": "npm run build && git add -A .",
+    "api-server": "node --inspect ./api-server/server.js",
     "postversion": "git push --tags origin HEAD"
   },
   "standard": {
     "ignore": [
-      "build"
+      "build",
+      "api-server"
     ]
   }
 }
