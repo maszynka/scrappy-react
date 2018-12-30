@@ -109,7 +109,7 @@ export default class App extends React.Component {
 
         <style jsx global>{`
         .main {
-          color: red;
+          color: blue;
         }
       `}</style>
       </div>

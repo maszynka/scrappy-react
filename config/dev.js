@@ -18,10 +18,7 @@ export default {
       main: true
     }),
     babel({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      presets: [ [ 'es2015', { modules: false } ], 'stage-0', 'react' ],
-      plugins: [ 'external-helpers' ]
+      babelrc: true
     }),
     cjs({
       exclude: 'node_modules/process-es6/**',
