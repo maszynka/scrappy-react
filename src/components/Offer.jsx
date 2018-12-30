@@ -4,22 +4,22 @@ import respondToVisibility from './UI/Helpers/respondToVisibility'
 
 const defaultWrapStyle = {
   display: 'grid',
-  fontSize: '1.2r em',
+  fontSize: '1rem',
   gridTemplateColumns: '1fr 1fr',
   gridTemplateRows: '1.5em, 1em'
 }
 
 const titleStyle = {
-  gridColumn: '1 / 2'
+  gridColumn: '1 / 3'
 }
 
 const priceStyle = {
   display: 'block',
-  gridColumn: '1 / 1'
+  gridColumn: '1 / 2'
 }
 const areaStyle = {
   display: 'block',
-  gridColumn: '2 / 2'
+  gridColumn: '2 / 3'
 }
 
 class Offer extends React.Component {
@@ -31,12 +31,7 @@ class Offer extends React.Component {
       titleStyle: titleStyle
     }
 
-    this.wrapStyle = props.read ? defaultWrapStyle : (
-      Object.assign({},
-        defaultWrapStyle,
-        { fontSize: '1.5rem' }
-      )
-    )
+    this.wrapStyle = defaultWrapStyle
 
     this.wrap = null
 

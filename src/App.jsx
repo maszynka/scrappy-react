@@ -56,7 +56,7 @@ export default class App extends React.Component {
       if (!initial) {
         let _currOffers = this.state.offersList.slice()
 
-        console.log(_currOffers.shift())
+        // console.log(_currOffers.shift())
         this.setState({
           offersList: _currOffers
         },
@@ -97,7 +97,7 @@ export default class App extends React.Component {
 
   render () {
     return (
-      <div>
+      <div className='main' style={{ 'minWidth': '240px' }}>
         <strong>Offers Count: {this.state.offersCount}</strong>
         <article>
           {
@@ -107,6 +107,11 @@ export default class App extends React.Component {
           }
         </article>
 
+        <style jsx global>{`
+        .main {
+          color: red;
+        }
+      `}</style>
       </div>
 
     )

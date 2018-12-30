@@ -1,0 +1,13 @@
+{
+  "presets": [
+    ["env", {
+      "modules": false,
+      "targets": "last 2 Chrome versions"
+    }],
+    "react"
+  ],
+  "plugins": [
+    "external-helpers" ,"styled-jsx/babel"
+  ],
+  "ignore": "node_modules/**"
+}
