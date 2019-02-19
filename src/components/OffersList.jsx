@@ -15,10 +15,13 @@ class OffersList extends React.Component {
   // componentDidMount () {
   //   this.listOffers(this.props.offers)
   // }
+  offerClicked (id) {
+    console.log(id + ' was clicked')
+  }
 
   listOffers (offers) {
     return offers.map(offer =>
-      <Offer key={offer.id} {...offer} />
+      <Offer key={offer.id} clickCallback={this.offerClicked} {...offer} />
     )
   }
 

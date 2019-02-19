@@ -1,7 +1,7 @@
 import getUnique from './getUnique'
 
-const mergeNew = (uniqueOffers, currentOffers) => {
-  let unique = getUnique(uniqueOffers, currentOffers)
+const mergeNew = (newOffers, currentOffers) => {
+  let unique = getUnique(newOffers, currentOffers)
   console.log(unique)
   return unique.concat(currentOffers)
 }

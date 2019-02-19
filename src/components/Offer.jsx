@@ -2,36 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import respondToVisibility from './UI/Helpers/respondToVisibility'
 
-const defaultWrapStyle = {
-  display: 'grid',
-  fontSize: '1rem',
-  gridTemplateColumns: '1fr 1fr',
-  gridTemplateRows: '1.5em, 1em'
-}
-
-const titleStyle = {
-  gridColumn: '1 / 3'
-}
-
-const priceStyle = {
-  display: 'block',
-  gridColumn: '1 / 2'
-}
-const areaStyle = {
-  display: 'block',
-  gridColumn: '2 / 3'
-}
-
 class Offer extends React.Component {
   constructor (props) {
+    // console.log(props)
     super(props)
-    this.state = {
-      wasRead: false,
-      clicked: false,
-      titleStyle: titleStyle
-    }
-
-    this.wrapStyle = defaultWrapStyle
 
     this.wrap = null
 
@@ -46,13 +20,7 @@ class Offer extends React.Component {
         console.log('smth')
         // event.stopPropagation()
         this.setState({
-          clicked: true,
-          titleStyle: Object.assign(
-            {},
-            this.state.titleStyle,
-            {
-              color: 'yellow'
-            })
+          clicked: true
         }, event => {
 
         })
@@ -63,17 +31,8 @@ class Offer extends React.Component {
   handleClick (event) {
     console.log('smth')
     event.stopPropagation()
-    this.setState({
-      clicked: true,
-      titleStyle: Object.assign(
-        {},
-        this.state.titleStyle,
-        {
-          color: 'yellow'
-        })
-    }, event => {
-
-    })
+    this.props.ui.visited = true
+    this.props.clickCallback(this.props.id)
   }
 
   componentDidMount () {
@@ -88,10 +47,15 @@ class Offer extends React.Component {
 
   render () {
     return (
-      <div style={this.wrapStyle} ref={this.wrapRef} className={this.state.wasRead ? 'was-read' : ''}>
-        <a className={this.state.clicked ? 'clicked' : ''} style={this.state.titleStyle} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'><h5>{this.props.title}</h5></a>
-        <span style={priceStyle}>Cena: {this.props.price} PLN</span>
-        <span style={areaStyle}>Area: {this.props.area}</span>
+      <div ref={this.wrapRef} className={`offer-wrap${this.props.ui.new ? ' new' : ''}`}>
+        <a className={`offer__link ${this.props.ui.visited ? 'clicked' : ''}`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>
+          <span className='offer__link__label'>{this.props.title}</span>
+        </a>
+        <div className='offer__details'>
+          <span className='offer__price'>{this.props.price} PLN</span>
+          <span className='offer__area'> / Area: {this.props.area} m<sup>2</sup></span>
+        </div>
+
       </div>
     )
   }
@@ -102,7 +66,8 @@ Offer.propTypes = {
   title: PropTypes.string.isRequired,
   ui: PropTypes.object.isRequired,
   price: PropTypes.string.isRequired,
-  area: PropTypes.string.isRequired
+  area: PropTypes.string.isRequired,
+  clickCallback: PropTypes.func.isRequired
 }
 
 export default Offer

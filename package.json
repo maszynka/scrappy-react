@@ -64,7 +64,7 @@
     "prebuild:dev": "npm run std --silent",
     "build:dev": "rollup -c config/dev.js -w",
     "browse": "browser-sync start --s --ss build --index html/index-dev.html --files html/**/*.html,build/**/*.js --no-notify",
-    "start": "npm-run-all --parallel build:dev browse",
+    "start": "npm-run-all --parallel api-server build:dev browse",
     "std": "standard --verbose | snazzy",
     "std:fix": "standard --fix | snazzy",
     "test": "npm run build:dev",
