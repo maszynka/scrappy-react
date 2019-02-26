@@ -37,15 +37,15 @@ class Offer extends React.Component {
 
   componentDidMount () {
     // autofocus the input on mount
-    window.requestAnimationFrame(() => (
-      respondToVisibility(this.wrap, (v) => {
-        console.log(v)
-      })
-    )
-    )
+    respondToVisibility(this.wrap, (v) => {
+      this.props.ui.seen = true
+    })
   }
 
   render () {
+    const = {
+      this.props.ui.new
+    }
     return (
       <div ref={this.wrapRef} className={`offer-wrap${this.props.ui.new ? ' new' : ''}`}>
         <a className={`offer__link ${this.props.ui.visited ? 'clicked' : ''}`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>

@@ -1,3 +1,5 @@
+import { ui } from './common'
+
 const _extract = {
   offersWrap: bodyContent => bodyContent.querySelector('.section-listing__row-content'),
   offers: offersWrap => offersWrap.querySelectorAll('.offer-item')
@@ -11,12 +13,7 @@ export const makeOffer = offerDOM => ({
   price: offerDOM.querySelector('.offer-item-price').innerText.replace(/\D/g, ''),
   href: offerDOM.dataset.url,
   area: offerDOM.querySelector('.offer-item-area').innerText.replace(/\D/g, ''),
-  ui: {
-    new: true,
-    visited: false,
-    read: false,
-    modified: null
-  }
+  ui
 })
 
 export default {

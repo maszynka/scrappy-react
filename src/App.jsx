@@ -32,7 +32,8 @@ export default class App extends React.Component {
     this.state = {
       offersCount: null,
       offersList: [],
-      visibleOffers: [],
+      visibleOffersCount: [],
+      visibleOffersList: [],
       filters: {
         min: null,
         max: null
@@ -62,7 +63,7 @@ export default class App extends React.Component {
         this.setState({
           offersCount: newOffers.length,
           offersList: newOffers
-        })
+        }, () => this.applyFilters)
       }
 
       if (!initial) {
@@ -109,8 +110,6 @@ export default class App extends React.Component {
 
   applyFilters (filters) {
     const inRange = value => {
-      console.log(filters)
-      console.log(value)
       return (
         filters.min == null || (filters.min != null && filters.min <= value)
       ) && (
@@ -119,9 +118,16 @@ export default class App extends React.Component {
     }
 
     const matchingOffers = this.state.offersList.filter(
-      offer => inRange(offer.price)
+      offer => inRange(parseInt(offer.price))
     )
-    console.log(matchingOffers)
+
+    this.setState(
+      {
+        visibleOffersList: matchingOffers,
+        visibleOffersCount: matchingOffers.length
+      },
+      () => console.log(this.state.visibleOffersList)
+    )
   }
 
   filtersChange (event) {
@@ -129,15 +135,14 @@ export default class App extends React.Component {
     const value = target.value ? target.value : null
     const name = target.name
 
-    const newFilter = {}
-    newFilter[name] = value
+    const newFilter = this.state.filters
+    newFilter[name] = parseInt(value)
 
     this.setState(
-      Object.assign(
-        {},
-        this.state.filter,
-        newFilter
-      ), () => this.applyFilters(this.state.filters)
+      {
+        filter: { newFilter }
+      },
+      () => this.applyFilters(this.state.filters)
     )
     // const handler = event['[[Handler]]']
     // const target = event['[[Target]]']

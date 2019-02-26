@@ -6,12 +6,19 @@
 
 const respondToVisibility = (element, callback) => {
   var options = {
-    root: null // document.documentElement
+
+  }
+
+  options = {
+    root: null, // document.documentElement
+    rootMargin: '0px',
+    threshold: 0.7
   }
 
   var observer = new window.IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
-      (entry.intersectionRatio > 0) && callback(entry.intersectionRatio)
+      console.log(entry);
+      (entry.intersectionRatio > 0) && callback(entry)
     })
   }, options)
 
