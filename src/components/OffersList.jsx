@@ -21,7 +21,7 @@ class OffersList extends React.Component {
 
   listOffers (offers) {
     return offers.map(offer =>
-      <Offer key={offer.id} clickCallback={this.offerClicked} {...offer} />
+      <Offer key={offer.id} clickCallback={this.offerClicked} mutateOffer={this.props.mutateOffer} {...offer} />
     )
   }
 

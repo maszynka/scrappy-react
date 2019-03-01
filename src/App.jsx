@@ -148,6 +148,25 @@ export default class App extends React.Component {
     // const target = event['[[Target]]']
   }
 
+  mutateOffer (offerId, mutation) {
+    const index = this.state.offersList.map(offer => offer.id).indexOf(offerId)
+
+    if (index === -1) {
+      return false
+    }
+
+    let mutatedOffersList = this.state.offersList.slice()
+
+    Object.assign(mutatedOffersList[index], mutation)
+
+    this.setState(
+      {
+        offersList : mutatedOffersList
+      },
+      console.log(this.state.offersList)
+    )
+  }
+
   render () {
     return (
       <div className='main' style={{ 'minWidth': '240px' }}>
@@ -158,7 +177,7 @@ export default class App extends React.Component {
           <PriceFilter onChange={this.filtersChange.bind(this)} name={'max'} placeholder={'Do'} />
           {
             this.state.offersList.length ? (
-              <OffersList offers={this.state.offersList} />
+              <OffersList offers={this.state.offersList} mutateOffer={this.mutateOffer.bind(this)} />
             ) : ''
           }
         </article>
