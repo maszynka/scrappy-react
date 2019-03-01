@@ -1,16 +1,41 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-const PriceFilter = props => {
-  const placeholder = (props.placeholder === 'string' && props.placeholder.length > 0) ? props.placeholder : props.name
-  return (
-    <input onChange={props.onChange} name={props.name} placeholder={placeholder} />
-  )
+class PriceFilter extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      userDefined: false,
+      value: null
+    }
+  }
+
+  onChange (){
+    this.setState({
+      userDefinded: true
+    }, ()=> props.onChange())
+  }
+
+  setValue(){
+    this.setState({
+      userDefinded: false
+    }, () => props.onChange())
+  }
+
+  /*  resetValue() {
+  } */
+
+  render () {
+    return (
+      <input onChange={props.onChange} name={props.name} placeholder={placeholder} data-userDefined={props.userDefined} />
+    )
+  }
 }
 
 PriceFilter.propTypes = {
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
+  userDefined: PropTypes.bool,
   onChange: PropTypes.func.isRequired
 }
 
