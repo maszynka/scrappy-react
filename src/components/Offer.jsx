@@ -43,7 +43,6 @@ class Offer extends React.Component {
           seen: true
         }
       })
-      this.props.ui.seen = true
     })
   }
 
@@ -51,9 +50,10 @@ class Offer extends React.Component {
     /* const = {
       this.props.ui.new
     } */
+    const classes = `offer-wrap${(this.props.ui.new ? ' new' : '')}${(this.props.ui.seen ? ' seen' : '')}`
 
     return (
-      <div ref={this.wrapRef} className={`offer-wrap${this.props.ui.new ? ' new' : ''}`}>
+      <div ref={this.wrapRef} className={classes}>
         <a className={`offer__link ${this.props.ui.visited ? 'clicked' : ''}`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>
           <span className='offer__link__label'>{this.props.title}</span>
         </a>

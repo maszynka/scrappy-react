@@ -28,7 +28,9 @@ class OffersList extends React.Component {
   render () {
     return (
       <div>
-        {this.state.offers}
+        {
+          (Array.isArray(this.props.offers)) ? this.listOffers(this.props.offers) : ''
+        }
       </div>
     )
   }

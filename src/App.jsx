@@ -2,6 +2,7 @@ import React from 'react'
 import xhrPromise from './components/Xhr/xhr'
 import storageApi from './components/Model/Storage/storage'
 import PriceFilter from './components/UI/Form/PriceFilter'
+import settings from './settings'
 
 // Offers
 import OffersList from './components/OffersList'
@@ -88,9 +89,9 @@ export default class App extends React.Component {
     const otodom2 = `http://localhost:7779/otodom2`
 
     this.getOffers(otodom1)
-    window.setTimeout(() => {
+    window.setInterval(() => {
       this.getOffers(otodom2)
-    }, 2000)
+    }, settings.offersCheckInterval)
   }
 
   // updateOffers (offers) {
@@ -161,7 +162,7 @@ export default class App extends React.Component {
 
     this.setState(
       {
-        offersList : mutatedOffersList
+        offersList: mutatedOffersList
       },
       console.log(this.state.offersList)
     )
@@ -177,7 +178,7 @@ export default class App extends React.Component {
           <PriceFilter onChange={this.filtersChange.bind(this)} name={'max'} placeholder={'Do'} />
           {
             this.state.offersList.length ? (
-              <OffersList offers={this.state.offersList} mutateOffer={this.mutateOffer.bind(this)} />
+              <OffersList offers={this.state.visibleOffersList} mutateOffer={this.mutateOffer.bind(this)} />
             ) : ''
           }
         </article>
