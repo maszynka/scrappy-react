@@ -131,11 +131,7 @@ export default class App extends React.Component {
     )
   }
 
-  filtersChange (event) {
-    const target = event.target
-    const value = target.value ? target.value : null
-    const name = target.name
-
+  setFilter (name, value) {
     const newFilter = this.state.filters
     newFilter[name] = parseInt(value)
 
@@ -145,8 +141,6 @@ export default class App extends React.Component {
       },
       () => this.applyFilters(this.state.filters)
     )
-    // const handler = event['[[Handler]]']
-    // const target = event['[[Target]]']
   }
 
   mutateOffer (offerId, mutation) {
@@ -174,8 +168,8 @@ export default class App extends React.Component {
         <strong>Offers Count: {this.state.offersCount}</strong>
         <article>
           Cena:
-          <PriceFilter onChange={this.filtersChange.bind(this)} name={'min'} placeholder={'Od'} />
-          <PriceFilter onChange={this.filtersChange.bind(this)} name={'max'} placeholder={'Do'} />
+          <PriceFilter name={'min'} placeholder={'Od'} initialValue={0} setFilter={this.setFilter.bind(this)} />
+          <PriceFilter name={'max'} placeholder={'Do'} initialValue={2000} setFilter={this.setFilter.bind(this)} />
           {
             this.state.offersList.length ? (
               <OffersList offers={this.state.visibleOffersList} mutateOffer={this.mutateOffer.bind(this)} />
