@@ -54,8 +54,8 @@ export default class App extends React.Component {
           this.state.offersList
         ) : fetchedOffers
 
-        console.log(newOffers)
-        console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
+        // console.log(newOffers)
+        // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
 
         storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
           console.log('offersList is set to ' + newOffers)
@@ -111,6 +111,7 @@ export default class App extends React.Component {
 
   applyFilters (filters) {
     const inRange = value => {
+      console.log(value, filters)
       return (
         filters.min == null || (filters.min != null && filters.min <= value)
       ) && (
@@ -118,9 +119,13 @@ export default class App extends React.Component {
       )
     }
 
+    console.log(filters)
+
     const matchingOffers = this.state.offersList.filter(
       offer => inRange(parseInt(offer.price))
     )
+
+    console.log(matchingOffers)
 
     this.setState(
       {
@@ -134,6 +139,8 @@ export default class App extends React.Component {
   setFilter (name, value) {
     const newFilter = this.state.filters
     newFilter[name] = parseInt(value)
+
+    console.log(name, value)
 
     this.setState(
       {

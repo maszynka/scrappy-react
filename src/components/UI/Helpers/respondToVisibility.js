@@ -16,10 +16,7 @@ const respondToVisibility = (element, callback) => {
   }
 
   var observer = new window.IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      console.log(entry);
-      (entry.intersectionRatio > 0) && callback(entry)
-    })
+    entries.forEach(entry => callback(entry))
   }, options)
 
   observer.observe(element)
