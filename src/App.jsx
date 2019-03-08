@@ -61,6 +61,9 @@ export default class App extends React.Component {
           console.log('offersList is set to ' + newOffers)
         })
 
+        console.log('storage is set to: ')
+        console.table(JSON.parse(storageApi.getItem('offersList')))
+
         this.setState({
           offersCount: newOffers.length,
           offersList: newOffers
@@ -119,12 +122,10 @@ export default class App extends React.Component {
       )
     }
 
-    console.log(filters)
-
-    const matchingOffers = this.state.offersList.filter(
-      offer => inRange(parseInt(offer.price))
-    )
-
+    const matchingOffers = this.state.offersList.filter(offer => {
+      console.log(offer)
+      return offer => inRange(parseInt(offer.price))
+    })
     console.log(matchingOffers)
 
     this.setState(
@@ -140,13 +141,14 @@ export default class App extends React.Component {
     const newFilter = this.state.filters
     newFilter[name] = parseInt(value)
 
-    console.log(name, value)
-
     this.setState(
       {
         filter: { newFilter }
       },
-      () => this.applyFilters(this.state.filters)
+      () => {
+        console.log('it runs')
+        this.applyFilters(this.state.filters)
+      }
     )
   }
 

@@ -13,11 +13,7 @@ if (settings.env === 'ext') {
   Object.assign(
     storageApi,
     {
-      setItem: (key, value, callback) => {
-        const storageItem = {}
-        storageItem[key] = value
-        storageApi.set(storageItem, callback)
-      },
+      setItem: (key, value, callback) => storageApi.set({ key: value }, callback),
       getItem: (key, callback) => storageApi.get([key], callback),
       removeItem: key => storageApi.remove(key)
     }
