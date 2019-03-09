@@ -8,7 +8,7 @@ class PriceFilter extends React.Component {
       value: this.props.initialValue
     }
     this.placeholder = (this.props.placeholder === 'string' && this.props.placeholder.length > 0) ? this.props.placeholder : this.props.name
-    console.log(this.props.name, this.props.initialValue)
+    // console.log(this.props.name, this.props.initialValue)
     this.props.setFilter(this.props.name, this.props.initialValue)
   }
 

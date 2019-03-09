@@ -40,50 +40,50 @@ export default class App extends React.Component {
         max: null
       }
     }
+    /*
+    * TODO:
+    * Geting new offers
+    * Xhr
+    * Save unique to storage
+    * FIlter matching results
+    * Dispatch notification for current platform
+    *
+    * */
   }
 
   getOffers (url) {
-    xhrPromise('GET', url).then(response => {
-      const testingServiceName = 'otodom'
-      let fetchedOffers = prepareOffers(response, testingServiceName)
-      const initial = !this.state.offersList.length
+    new Promise((resolve, reject) => {
+      xhrPromise('GET', url).then(response => {
+        const testingServiceName = 'otodom'
+        let fetchedOffers = prepareOffers(response, testingServiceName)
+        const initial = !this.state.offersList.length
 
-      const callbackAfterTest = () => {
-        let newOffers = !initial ? mergeNewOffers(
-          fetchedOffers,
-          this.state.offersList
-        ) : fetchedOffers
+        const xhrCallback = () => {
+          let newOffers = !initial ? mergeNewOffers(
+            fetchedOffers,
+            this.state.offersList
+          ) : fetchedOffers
 
-        // console.log(newOffers)
-        // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
+          // console.log(newOffers)
+          // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
 
-        storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
-          console.log('offersList is set to ' + newOffers)
-        })
+          storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
+            console.log('offersList is set to ' + newOffers)
+          })
 
-        console.log('storage is set to: ')
-        console.table(JSON.parse(storageApi.getItem('offersList')))
+          console.log('storage is set : ' + !!storageApi.getItem('offersList'))
 
-        this.setState({
-          offersCount: newOffers.length,
-          offersList: newOffers
-        }, () => this.applyFilters)
-      }
+          this.setState({
+            offersCount: newOffers.length,
+            offersList: newOffers
+          }, resolve(newOffers) )
+        }
 
-      if (!initial) {
-        let _currOffers = this.state.offersList.slice()
-
-        // console.log(_currOffers.shift())
-        this.setState({
-          offersList: _currOffers
-        },
-        callbackAfterTest()
-        )
-      } else {
-        callbackAfterTest()
-      }
-    }).catch(reason => {
-      console.log('Xhr error (' + reason + ')')
+        xhrCallback()
+      }).catch(reason => {
+        console.log('Xhr error (' + reason + ')')
+        reject(reason)
+      })
     })
   }
 
@@ -91,7 +91,7 @@ export default class App extends React.Component {
     const otodom1 = `http://localhost:7779/otodom1`
     const otodom2 = `http://localhost:7779/otodom2`
 
-    this.getOffers(otodom1)
+    this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
     window.setInterval(() => {
       this.getOffers(otodom2)
     }, settings.offersCheckInterval)
@@ -121,12 +121,11 @@ export default class App extends React.Component {
         filters.max == null || (filters.max != null && filters.max >= value)
       )
     }
+    !this.state.offersList && console.log('offersList empty filtering canceled')
 
     const matchingOffers = this.state.offersList.filter(offer => {
-      console.log(offer)
       return offer => inRange(parseInt(offer.price))
     })
-    console.log(matchingOffers)
 
     this.setState(
       {
@@ -166,8 +165,7 @@ export default class App extends React.Component {
     this.setState(
       {
         offersList: mutatedOffersList
-      },
-      console.log(this.state.offersList)
+      }
     )
   }
 
