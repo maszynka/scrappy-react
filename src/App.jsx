@@ -91,6 +91,13 @@ export default class App extends React.Component {
     })
   }
 
+  displayOffers (offers, callback) {
+    this.setState({
+      visibleOffersList: offers,
+      visibleOffersCount: offers.length
+    }, callback)
+  }
+
   componentDidMount () {
     let oddRun = true
     const switchBetweenServices = () => {
@@ -100,18 +107,19 @@ export default class App extends React.Component {
       return oddRun ? otodom2 : otodom1
     }
 
-    // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
-    window.setInterval(() => {
+    const fullEventStack = () => {
       this.getOffers(switchBetweenServices()).then(
         offers => this.storeNewOffers(offers, this.state.offersList).then(
           offers => this.applyFilters(this.state.filters, offers)).then(
-          matchingOffers => this.setState({
-            visibleOffersList: matchingOffers,
-            visibleOffersCount: matchingOffers.length
-          })
+          matchingOffers => this.displayOffers(matchingOffers)
         )
       )
-    }, settings.offersCheckInterval)
+    }
+
+    // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
+    fullEventStack()
+    // window.setInterval(fullEventStack, settings.offersCheckInterval)
+    window.setTimeout(fullEventStack, settings.offersCheckInterval)
   }
 
   // updateOffers (offers) {
@@ -130,26 +138,22 @@ export default class App extends React.Component {
   // }
 
   applyFilters (filters) {
-    const inRange = value => {
-      return (
-        filters.min == null || (filters.min != null && filters.min <= value)
-      ) && (
-        filters.max == null || (filters.max != null && filters.max >= value)
+    return new Promise((resolve, reject) => {
+      const inRange = value => {
+        return (
+          filters.min == null || (filters.min != null && filters.min <= value)
+        ) && (
+          filters.max == null || (filters.max != null && filters.max >= value)
+        )
+      }
+      !this.state.offersList && console.log('offersList empty filtering canceled')
+
+      const matchingOffers = this.state.offersList.filter(
+        offer => inRange(parseInt(offer.price))
       )
-    }
-    !this.state.offersList && console.log('offersList empty filtering canceled')
 
-    const matchingOffers = this.state.offersList.filter(
-      offer => inRange(parseInt(offer.price))
-    )
-
-    this.setState(
-      {
-        visibleOffersList: matchingOffers,
-        visibleOffersCount: matchingOffers.length
-      },
-      () => console.log(this.state.visibleOffersList)
-    )
+      resolve(matchingOffers)
+    })
   }
 
   setFilter (name, value) {
@@ -162,7 +166,9 @@ export default class App extends React.Component {
       },
       () => {
         console.log('it runs')
-        this.applyFilters(this.state.filters)
+        this.applyFilters(this.state.filters, this.state.offersList).then(
+          matchingOffers => this.displayOffers(matchingOffers)
+        )
       }
     )
   }
