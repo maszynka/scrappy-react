@@ -79,29 +79,14 @@ export default class App extends React.Component {
     })
   }
 
-  getOffers (services) {
-    const servicesNames = Object.keys(services).filter(name => services.hasOwnProperty(name))
-    const len = servicesNames.length
-    let servicesFetched = 0
-
-    const resolveService = ()=> {
-      servicesFetched < len ? servicesFetched++ : resolve()
-
-    }
-    console.log(servicesNames)
-    for (let i, i < len; i++) {
-      const name = servicesNames[i]
-      const service = services[name]
-    }
-
+  getOffers (service) {
     return new Promise((resolve, reject) => {
       xhrPromise('GET', service.url).then(response => {
-        const testingServiceName = 'otodom'
-        let fetchedOffers = prepareOffers(response, testingServiceName)
+        let fetchedOffers = prepareOffers(response, service.name)
 
         resolve(fetchedOffers)
       }).catch(reason => {
-        console.log('Xhr error (' + reason + ')')
+        console.log('Xhr error (' + JSON.parse(reason) + ')')
         reject(reason)
       })
     })
@@ -115,31 +100,51 @@ export default class App extends React.Component {
   }
 
   componentDidMount () {
-    let oddRun = true
-    const switchBetweenServices = () => {
+    /* let oddRun = true
+      const switchBetweenServices = () => {
       const otodom1 = `http://localhost:7779/otodom1`
       const otodom2 = `http://localhost:7779/otodom2`
       oddRun = !oddRun
       return oddRun ? otodom2 : otodom1
-    }
+    } */
 
     const services = {
       otodom: serviceOtodom,
       morizon: serviceMorizon
     }
 
-    const fullEventStack = () => {
-      this.getOffers(services).then(
-        offers => this.storeNewOffers(offers, this.state.offersList).then(
-          offers => this.applyFilters(this.state.filters, offers)).then(
+    const getAllOffers = (services) => {
+      return new Promise((resolve, reject) => {
+        const servicesNames = Object.keys(services).filter(name => services.hasOwnProperty(name))
+        const len = servicesNames.length
+        let servicesFetched = 0
+
+        for (let i = 0; i < len; i++) {
+          const name = servicesNames[i]
+          const service = services[name]
+          Object.assign(service, { name })
+          this.getOffers(service).then(
+            offers => this.storeNewOffers(offers, this.state.offersList).then(
+              offers => {
+                servicesFetched < (len - 1) ? servicesFetched++ : resolve(this.state.offersList)
+              }
+            )
+          )
+        }
+      })
+    }
+
+    const fullEventStack = (services) => {
+      getAllOffers(services).then(
+        offers => this.applyFilters(this.state.filters, offers).then(
           matchingOffers => this.displayOffers(matchingOffers)
         )
       )
     }
 
     // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
-    fullEventStack()
-    window.setInterval(fullEventStack, settings.offersCheckInterval)
+    fullEventStack(services)
+    window.setInterval(() => fullEventStack(services), settings.offersCheckInterval)
     // window.setTimeout(fullEventStack, settings.offersCheckInterval)
     // window.setTimeout(fullEventStack, 2*settings.offersCheckInterval)
   }
