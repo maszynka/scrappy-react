@@ -43,43 +43,47 @@ export default class App extends React.Component {
     /*
     * TODO:
     * Geting new offers
-    * Xhr
-    * Save unique to storage
-    * FIlter matching results
+    * Xhr +
+    * Save unique to storage +
+    * Filter matching results +
+    * Set state from filtered results
     * Dispatch notification for current platform
-    *
     * */
   }
 
+  storeNewOffers (fetchedOffers, currentOffers) {
+    return new Promise((resolve, reject) => {
+      const initial = !currentOffers.length
+      let newOffers = !initial ? mergeNewOffers(
+        fetchedOffers,
+        currentOffers
+      ) : fetchedOffers
+
+      console.log(fetchedOffers, currentOffers)
+
+      // console.log(newOffers)
+      // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
+
+      storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
+        console.log('offersList is set to ' + newOffers)
+      })
+
+      console.log('storage is set : ' + !!storageApi.getItem('offersList'))
+
+      this.setState({
+        offersCount: newOffers.length,
+        offersList: newOffers
+      }, resolve(newOffers))
+    })
+  }
+
   getOffers (url) {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       xhrPromise('GET', url).then(response => {
         const testingServiceName = 'otodom'
         let fetchedOffers = prepareOffers(response, testingServiceName)
-        const initial = !this.state.offersList.length
 
-        const xhrCallback = () => {
-          let newOffers = !initial ? mergeNewOffers(
-            fetchedOffers,
-            this.state.offersList
-          ) : fetchedOffers
-
-          // console.log(newOffers)
-          // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
-
-          storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
-            console.log('offersList is set to ' + newOffers)
-          })
-
-          console.log('storage is set : ' + !!storageApi.getItem('offersList'))
-
-          this.setState({
-            offersCount: newOffers.length,
-            offersList: newOffers
-          }, resolve(newOffers) )
-        }
-
-        xhrCallback()
+        resolve(fetchedOffers)
       }).catch(reason => {
         console.log('Xhr error (' + reason + ')')
         reject(reason)
@@ -88,12 +92,25 @@ export default class App extends React.Component {
   }
 
   componentDidMount () {
-    const otodom1 = `http://localhost:7779/otodom1`
-    const otodom2 = `http://localhost:7779/otodom2`
+    let oddRun = true
+    const switchBetweenServices = () => {
+      const otodom1 = `http://localhost:7779/otodom1`
+      const otodom2 = `http://localhost:7779/otodom2`
+      oddRun = !oddRun
+      return oddRun ? otodom2 : otodom1
+    }
 
-    this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
+    // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
     window.setInterval(() => {
-      this.getOffers(otodom2)
+      this.getOffers(switchBetweenServices()).then(
+        offers => this.storeNewOffers(offers, this.state.offersList).then(
+          offers => this.applyFilters(this.state.filters, offers)).then(
+          matchingOffers => this.setState({
+            visibleOffersList: matchingOffers,
+            visibleOffersCount: matchingOffers.length
+          })
+        )
+      )
     }, settings.offersCheckInterval)
   }
 
@@ -114,7 +131,6 @@ export default class App extends React.Component {
 
   applyFilters (filters) {
     const inRange = value => {
-      console.log(value, filters)
       return (
         filters.min == null || (filters.min != null && filters.min <= value)
       ) && (
@@ -123,9 +139,9 @@ export default class App extends React.Component {
     }
     !this.state.offersList && console.log('offersList empty filtering canceled')
 
-    const matchingOffers = this.state.offersList.filter(offer => {
-      return offer => inRange(parseInt(offer.price))
-    })
+    const matchingOffers = this.state.offersList.filter(
+      offer => inRange(parseInt(offer.price))
+    )
 
     this.setState(
       {
