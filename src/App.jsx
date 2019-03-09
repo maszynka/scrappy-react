@@ -9,6 +9,8 @@ import OffersList from './components/OffersList'
 import prepareOffers from './components/Model/Offers/prepare'
 // import updateCommon from './components/Model/Offers/updateCommon'
 import mergeNewOffers from './components/Model/Offers/mergeNew'
+import serviceOtodom from './components/Model/Service/otodom'
+import serviceMorizon from './components/Model/Service/morizon'
 
 // even though Rollup is bundling all your files together, errors and
 // logs will still point to your original source modules
@@ -77,9 +79,23 @@ export default class App extends React.Component {
     })
   }
 
-  getOffers (url) {
+  getOffers (services) {
+    const servicesNames = Object.keys(services).filter(name => services.hasOwnProperty(name))
+    const len = servicesNames.length
+    let servicesFetched = 0
+
+    const resolveService = ()=> {
+      servicesFetched < len ? servicesFetched++ : resolve()
+
+    }
+    console.log(servicesNames)
+    for (let i, i < len; i++) {
+      const name = servicesNames[i]
+      const service = services[name]
+    }
+
     return new Promise((resolve, reject) => {
-      xhrPromise('GET', url).then(response => {
+      xhrPromise('GET', service.url).then(response => {
         const testingServiceName = 'otodom'
         let fetchedOffers = prepareOffers(response, testingServiceName)
 
@@ -107,8 +123,13 @@ export default class App extends React.Component {
       return oddRun ? otodom2 : otodom1
     }
 
+    const services = {
+      otodom: serviceOtodom,
+      morizon: serviceMorizon
+    }
+
     const fullEventStack = () => {
-      this.getOffers(switchBetweenServices()).then(
+      this.getOffers(services).then(
         offers => this.storeNewOffers(offers, this.state.offersList).then(
           offers => this.applyFilters(this.state.filters, offers)).then(
           matchingOffers => this.displayOffers(matchingOffers)
@@ -118,8 +139,9 @@ export default class App extends React.Component {
 
     // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
     fullEventStack()
-    // window.setInterval(fullEventStack, settings.offersCheckInterval)
-    window.setTimeout(fullEventStack, settings.offersCheckInterval)
+    window.setInterval(fullEventStack, settings.offersCheckInterval)
+    // window.setTimeout(fullEventStack, settings.offersCheckInterval)
+    // window.setTimeout(fullEventStack, 2*settings.offersCheckInterval)
   }
 
   // updateOffers (offers) {

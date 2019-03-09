@@ -18,5 +18,6 @@ export const makeOffer = offerDOM => ({
 
 export default {
   extractOffers,
-  makeOffer
+  makeOffer,
+  url: 'https://www.olx.pl/nieruchomosci/mieszkania/wroclaw/'
 }
