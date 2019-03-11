@@ -28,13 +28,14 @@ export function xhr (
 
 const xhrPromise = (
   requestMethod,
-  url
+  url,
+  additionalHeaders
 ) => {
   return new Promise((resolve, reject) => {
     let req = new window.XMLHttpRequest()
     url = 'https://cors-anywhere.herokuapp.com/' + url
     req.open(requestMethod, url, true)
-    // addAditionalHeadersToXhrReq(req, additionalHeaders);
+    addAditionalHeadersToXhrReq(req, additionalHeaders)
     req.onload = function () {
       if (this.status >= 200 && this.status < 300) {
         resolve(req.response)

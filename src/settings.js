@@ -2,5 +2,8 @@
 
 export default {
   env: (typeof chrome.browserAction === 'object') ? 'ext' : 'web',
-  offersCheckInterval: 10050 // ms
+  xhrAdditionalHeaders: {
+    'X-Requested-With': 'XmlHttpRequest'
+  },
+  offersCheckInterval: 1005000000 // ms
 }

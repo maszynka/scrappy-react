@@ -11,6 +11,7 @@ import prepareOffers from './components/Model/Offers/prepare'
 import mergeNewOffers from './components/Model/Offers/mergeNew'
 import serviceOtodom from './components/Model/Service/otodom'
 import serviceMorizon from './components/Model/Service/morizon'
+import serviceOlx from './components/Model/Service/olx'
 
 // even though Rollup is bundling all your files together, errors and
 // logs will still point to your original source modules
@@ -81,11 +82,13 @@ export default class App extends React.Component {
 
   getOffers (service) {
     return new Promise((resolve, reject) => {
-      xhrPromise('GET', service.url).then(response => {
+      const url = `https://cors-anywhere.herokuapp.com/${service.url}`
+      xhrPromise('GET', url, settings.xhrAdditionalHeaders).then(response => {
         let fetchedOffers = prepareOffers(response, service.name)
 
         resolve(fetchedOffers)
       }).catch(reason => {
+        console.log(reason)
         console.log('Xhr error (' + JSON.parse(reason) + ')')
         reject(reason)
       })
@@ -110,7 +113,8 @@ export default class App extends React.Component {
 
     const services = {
       otodom: serviceOtodom,
-      morizon: serviceMorizon
+      morizon: serviceMorizon,
+      olx: serviceOlx
     }
 
     const getAllOffers = (services) => {

@@ -4,6 +4,9 @@ import makeOffer from '../Offer/makeOffer'
 
 export default (response, service) => {
   const bodyContent = cleanResponse(response)
+  // console.log(bodyContent)
+  // console.log(service)
+  console.log(extractDOM[service])
   const _offersDOM = extractDOM[service](bodyContent)
   let offers = []
 
