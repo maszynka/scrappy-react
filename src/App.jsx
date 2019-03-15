@@ -39,8 +39,8 @@ export default class App extends React.Component {
       visibleOffersCount: [],
       visibleOffersList: [],
       filters: {
-        min: null,
-        max: null
+        min: '',
+        max: ''
       }
     }
     /*
@@ -172,9 +172,9 @@ export default class App extends React.Component {
     return new Promise((resolve, reject) => {
       const inRange = value => {
         return (
-          filters.min == null || (filters.min != null && filters.min <= value)
+          filters.min === '' || (filters.min !== '' && filters.min <= value)
         ) && (
-          filters.max == null || (filters.max != null && filters.max >= value)
+          filters.max === '' || (filters.max !== '' && filters.max >= value)
         )
       }
       !this.state.offersList && console.log('offersList empty filtering canceled')

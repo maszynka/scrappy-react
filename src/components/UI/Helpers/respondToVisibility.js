@@ -5,11 +5,7 @@
 //   argument:
 
 const respondToVisibility = (element, callback) => {
-  var options = {
-
-  }
-
-  options = {
+  const options = {
     root: null, // document.documentElement
     rootMargin: '0px',
     threshold: 0.7
