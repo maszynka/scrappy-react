@@ -1,5 +1,6 @@
-let onError = (event, url) => {
-  throw new Error('XHR request has failed with status: ' + event.target.status + '.')
+let onError = (err, reject) => {
+  console.error('XHR request has failed', err)
+  reject()
 }
 let addAditionalHeadersToXhrReq = (req, additionalHeaders) => {
   for (var header in additionalHeaders) {
@@ -9,31 +10,18 @@ let addAditionalHeadersToXhrReq = (req, additionalHeaders) => {
   }
 }
 
-export function xhr (
-  requestMethod,
-  url,
-  onReadyCallback,
-  additionalHeaders,
-  data = null) {
-  let req = new window.XMLHttpRequest()
-  req.open(requestMethod, url, true)
-
-  if (additionalHeaders) { addAditionalHeadersToXhrReq(req, additionalHeaders) };
-
-  req.onload = event => onReadyCallback(event, req.response)
-
-  req.onerror = onError
-  req.send(data)
-}
-
 const xhrPromise = (
-  requestMethod,
-  url
+  url,
+  settings
 ) => {
   return new Promise((resolve, reject) => {
     let req = new window.XMLHttpRequest()
-    req.open(requestMethod, url, true)
-    // addAditionalHeadersToXhrReq(req, additionalHeaders);
+    url = settings.corsProxyUrl + url
+
+    req.open(settings.method, url, true)
+    req.timeout = settings.timeout
+    addAditionalHeadersToXhrReq(req, settings.additionalHeaders)
+
     req.onload = function () {
       if (this.status >= 200 && this.status < 300) {
         resolve(req.response)
@@ -44,7 +32,13 @@ const xhrPromise = (
         }))
       }
     }
-    req.onerror = reject
+
+    req.ontimeout = (e) => {
+      console.error(`xhr request to ${url}, timed out (>${settings.timeout}. ${e}`)
+    }
+
+    req.onerror = (err, reject) => onError(err, reject)
+
     req.send()
   })
 
@@ -61,11 +55,11 @@ const xhrPromise = (
   )); */
 }
 
-export const post = (url, onReadyCallback, data) => {
-  xhr('POST', url, onReadyCallback, data)
-}
-export const get = (url, onReadyCallback) => {
-  xhr('GET', url, onReadyCallback)
-}
+/*  export const post = (url, onReadyCallback, data) => {
+    xhr('POST', url, onReadyCallback, data)
+  }
+  export const get = (url, onReadyCallback) => {
+    xhr('GET', url, onReadyCallback)
+  } */
 
 export default xhrPromise

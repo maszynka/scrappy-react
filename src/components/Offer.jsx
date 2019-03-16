@@ -31,7 +31,16 @@ class Offer extends React.Component {
   handleClick (event) {
     console.log('smth')
     event.stopPropagation()
-    this.props.ui.visited = true
+    // this.props.ui.visited = true
+
+    this.props.mutateOffer(this.props.id, {
+      ui: {
+        visited: true
+      }
+    }, () => {
+      window.open(this.props.href, '_blank')
+    })
+
     this.props.clickCallback(this.props.id)
   }
 
@@ -50,11 +59,20 @@ class Offer extends React.Component {
     /* const = {
       this.props.ui.new
     } */
-    const classes = `offer-wrap${(this.props.ui.new ? ' new' : '')}${(this.props.ui.seen ? ' seen' : '')}`
+    // const classes = `offer-wrap${(this.props.ui.new ? ' new' : '')}${(this.props.ui.seen ? ' seen' : '')}`
+    let classNames = [
+      `offer-wrap`
+    ]
+
+    this.props.ui.new && classNames.push('new')
+    this.props.ui.seen && classNames.push('seen')
+    this.props.ui.visited && classNames.push('visited')
+
+    // console.log(classNames)
 
     return (
-      <div ref={this.wrapRef} className={classes}>
-        <a className={`offer__link ${this.props.ui.visited ? 'clicked' : ''}`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>
+      <div ref={this.wrapRef} className={classNames.join(' ')}>
+        <a className={`offer__link`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>
           <span className='offer__link__label'>{this.props.title}</span>
         </a>
         <div className='offer__details'>
@@ -68,12 +86,14 @@ class Offer extends React.Component {
 }
 
 Offer.propTypes = {
+  id: PropTypes.string.isRequired,
   href: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   ui: PropTypes.object.isRequired,
   price: PropTypes.string.isRequired,
   area: PropTypes.string.isRequired,
-  clickCallback: PropTypes.func.isRequired
+  clickCallback: PropTypes.func.isRequired,
+  mutateOffer: PropTypes.func.isRequired
 }
 
 export default Offer

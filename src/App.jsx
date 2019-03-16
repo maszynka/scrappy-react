@@ -9,6 +9,9 @@ import OffersList from './components/OffersList'
 import prepareOffers from './components/Model/Offers/prepare'
 // import updateCommon from './components/Model/Offers/updateCommon'
 import mergeNewOffers from './components/Model/Offers/mergeNew'
+import serviceOtodom from './components/Model/Service/otodom'
+import serviceMorizon from './components/Model/Service/morizon'
+import serviceOlx from './components/Model/Service/olx'
 
 // even though Rollup is bundling all your files together, errors and
 // logs will still point to your original source modules
@@ -36,62 +39,118 @@ export default class App extends React.Component {
       visibleOffersCount: [],
       visibleOffersList: [],
       filters: {
-        min: null,
-        max: null
+        min: '',
+        max: ''
       }
     }
+    /*
+    * TODO:
+    * Geting new offers
+    * Xhr +
+    * Save unique to storage +
+    * Filter matching results +
+    * Set state from filtered results
+    * Dispatch notification for current platform
+    * */
   }
 
-  getOffers (url) {
-    xhrPromise('GET', url).then(response => {
-      const testingServiceName = 'otodom'
-      let fetchedOffers = prepareOffers(response, testingServiceName)
-      const initial = !this.state.offersList.length
+  storeNewOffers (fetchedOffers, currentOffers) {
+    return new Promise((resolve, reject) => {
+      const initial = !currentOffers.length
+      let newOffers = !initial ? mergeNewOffers(
+        fetchedOffers,
+        currentOffers
+      ) : fetchedOffers
 
-      const callbackAfterTest = () => {
-        let newOffers = !initial ? mergeNewOffers(
-          fetchedOffers,
-          this.state.offersList
-        ) : fetchedOffers
+      console.log(fetchedOffers, currentOffers)
 
-        console.log(newOffers)
-        console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
+      // console.log(newOffers)
+      // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
 
-        storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
-          console.log('offersList is set to ' + newOffers)
-        })
+      storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
+        console.log('offersList is set to ' + newOffers)
+      })
 
-        this.setState({
-          offersCount: newOffers.length,
-          offersList: newOffers
-        }, () => this.applyFilters)
-      }
+      console.log('storage is set : ' + !!storageApi.getItem('offersList'))
 
-      if (!initial) {
-        let _currOffers = this.state.offersList.slice()
-
-        // console.log(_currOffers.shift())
-        this.setState({
-          offersList: _currOffers
-        },
-        callbackAfterTest()
-        )
-      } else {
-        callbackAfterTest()
-      }
-    }).catch(reason => {
-      console.log('Xhr error (' + reason + ')')
+      this.setState({
+        offersCount: newOffers.length,
+        offersList: newOffers
+      }, resolve(newOffers))
     })
   }
 
-  componentDidMount () {
-    const otodom1 = `http://localhost:7779/otodom1`
-    const otodom2 = `http://localhost:7779/otodom2`
+  getOffers (service) {
+    return new Promise((resolve, reject) => {
+      const url = `https://cors-anywhere.herokuapp.com/${service.url}`
+      xhrPromise(url, settings.xhr).then(response => {
+        let fetchedOffers = prepareOffers(response, service.name)
 
-    this.getOffers(otodom1)
-    window.setInterval(() => {
-      this.getOffers(otodom2)
-    }, settings.offersCheckInterval)
+        resolve(fetchedOffers)
+      }).catch(reason => {
+        console.log(reason)
+        console.log('Xhr error (' + JSON.parse(reason) + ')')
+        reject(reason)
+      })
+    })
+  }
+
+  displayOffers (offers, callback) {
+    this.setState({
+      visibleOffersList: offers,
+      visibleOffersCount: offers.length
+    }, callback)
+  }
+
+  componentDidMount () {
+    /* let oddRun = true
+      const switchBetweenServices = () => {
+      const otodom1 = `http://localhost:7779/otodom1`
+      const otodom2 = `http://localhost:7779/otodom2`
+      oddRun = !oddRun
+      return oddRun ? otodom2 : otodom1
+    } */
+
+    const services = {
+      otodom: serviceOtodom,
+      morizon: serviceMorizon,
+      olx: serviceOlx
+    }
+
+    const getAllOffers = (services) => {
+      return new Promise((resolve, reject) => {
+        const servicesNames = Object.keys(services).filter(name => services.hasOwnProperty(name))
+        const len = servicesNames.length
+        let servicesFetched = 0
+
+        for (let i = 0; i < len; i++) {
+          const name = servicesNames[i]
+          const service = services[name]
+          Object.assign(service, { name })
+          this.getOffers(service).then(
+            offers => this.storeNewOffers(offers, this.state.offersList).then(
+              offers => {
+                servicesFetched < (len - 1) ? servicesFetched++ : resolve(this.state.offersList)
+              }
+            )
+          )
+        }
+      })
+    }
+
+    const fullEventStack = (services) => {
+      getAllOffers(services).then(
+        offers => this.applyFilters(this.state.filters, offers).then(
+          matchingOffers => this.displayOffers(matchingOffers)
+        )
+      )
+    }
+
+    // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
+    fullEventStack(services)
+    window.setInterval(() => fullEventStack(services), settings.offersCheckInterval)
+    // window.setTimeout(fullEventStack, settings.offersCheckInterval)
+    // window.setTimeout(fullEventStack, 2*settings.offersCheckInterval)
   }
 
   // updateOffers (offers) {
@@ -110,32 +169,25 @@ export default class App extends React.Component {
   // }
 
   applyFilters (filters) {
-    const inRange = value => {
-      return (
-        filters.min == null || (filters.min != null && filters.min <= value)
-      ) && (
-        filters.max == null || (filters.max != null && filters.max >= value)
+    return new Promise((resolve, reject) => {
+      const inRange = value => {
+        return (
+          filters.min === '' || (filters.min !== '' && filters.min <= value)
+        ) && (
+          filters.max === '' || (filters.max !== '' && filters.max >= value)
+        )
+      }
+      !this.state.offersList && console.log('offersList empty filtering canceled')
+
+      const matchingOffers = this.state.offersList.filter(
+        offer => inRange(parseInt(offer.price))
       )
-    }
 
-    const matchingOffers = this.state.offersList.filter(
-      offer => inRange(parseInt(offer.price))
-    )
-
-    this.setState(
-      {
-        visibleOffersList: matchingOffers,
-        visibleOffersCount: matchingOffers.length
-      },
-      () => console.log(this.state.visibleOffersList)
-    )
+      resolve(matchingOffers)
+    })
   }
 
-  filtersChange (event) {
-    const target = event.target
-    const value = target.value ? target.value : null
-    const name = target.name
-
+  setFilter (name, value) {
     const newFilter = this.state.filters
     newFilter[name] = parseInt(value)
 
@@ -143,18 +195,19 @@ export default class App extends React.Component {
       {
         filter: { newFilter }
       },
-      () => this.applyFilters(this.state.filters)
+      () => {
+        console.log('it runs')
+        this.applyFilters(this.state.filters, this.state.offersList).then(
+          matchingOffers => this.displayOffers(matchingOffers)
+        )
+      }
     )
-    // const handler = event['[[Handler]]']
-    // const target = event['[[Target]]']
   }
 
   mutateOffer (offerId, mutation) {
     const index = this.state.offersList.map(offer => offer.id).indexOf(offerId)
 
-    if (index === -1) {
-      return false
-    }
+    if (index === -1) { return false }
 
     let mutatedOffersList = this.state.offersList.slice()
 
@@ -163,8 +216,7 @@ export default class App extends React.Component {
     this.setState(
       {
         offersList: mutatedOffersList
-      },
-      console.log(this.state.offersList)
+      }
     )
   }
 
@@ -174,8 +226,8 @@ export default class App extends React.Component {
         <strong>Offers Count: {this.state.offersCount}</strong>
         <article>
           Cena:
-          <PriceFilter onChange={this.filtersChange.bind(this)} name={'min'} placeholder={'Od'} />
-          <PriceFilter onChange={this.filtersChange.bind(this)} name={'max'} placeholder={'Do'} />
+          <PriceFilter name={'min'} placeholder={'Od'} initialValue={0} setFilter={this.setFilter.bind(this)} />
+          <PriceFilter name={'max'} placeholder={'Do'} initialValue={2000} setFilter={this.setFilter.bind(this)} />
           {
             this.state.offersList.length ? (
               <OffersList offers={this.state.visibleOffersList} mutateOffer={this.mutateOffer.bind(this)} />
@@ -217,7 +269,6 @@ export default class App extends React.Component {
         }
       `}</style>
       </div>
-
     )
   }
 }
