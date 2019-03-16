@@ -9,7 +9,7 @@ export default {
     additionalHeaders: {
       'X-Requested-With': 'XmlHttpRequest'
     },
-    timeout: 1000 * 5,
+    timeout: 1000 * 15,
     method: 'GET',
     corsProxyUrl: 'https://cors-anywhere.herokuapp.com/'
   },

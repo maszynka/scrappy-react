@@ -82,8 +82,7 @@ export default class App extends React.Component {
 
   getOffers (service) {
     return new Promise((resolve, reject) => {
-      const url = `https://cors-anywhere.herokuapp.com/${service.url}`
-      xhrPromise(url, settings.xhr).then(response => {
+      xhrPromise(service.url, settings.xhr).then(response => {
         let fetchedOffers = prepareOffers(response, service.name)
 
         resolve(fetchedOffers)
