@@ -66,10 +66,13 @@ class Offer extends React.Component {
 
     this.props.ui.new && classNames.push('new')
     this.props.ui.seen && classNames.push('seen')
+    this.props.ui.visited && classNames.push('visited')
+
+    // console.log(classNames)
 
     return (
       <div ref={this.wrapRef} className={classNames.join(' ')}>
-        <a className={`offer__link ${this.props.ui.visited ? 'clicked' : ''}`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>
+        <a className={`offer__link`} href={this.props.href} onClick={this.handleClick.bind(this)} target='_blank'>
           <span className='offer__link__label'>{this.props.title}</span>
         </a>
         <div className='offer__details'>

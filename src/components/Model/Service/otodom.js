@@ -13,17 +13,21 @@ const _extract = {
 
 export const extractOffers = bodyContent => {
   const offersWrap = _extract.offersWrap(bodyContent)
-  return offersWrap && _extract.offers(_extract.offersWrap(bodyContent))
+  return offersWrap ? _extract.offers(offersWrap) : null
 }
 
-export const makeOffer = offerDOM => ({
-  id: `otodom-${offerDOM.dataset.itemId}`,
-  title: `${offerDOM.querySelector('.offer-item-title').innerText}(otodom)`,
-  price: offerDOM.querySelector('.offer-item-price').innerText.replace(/\D/g, ''),
-  href: offerDOM.dataset.url,
-  area: offerDOM.querySelector('.offer-item-area').innerText.replace(/\D/g, ''),
-  ui
-})
+export const makeOffer = offerDOM => {
+  const prefix = 'otodom'
+
+  return {
+    id: `${prefix}-${offerDOM.dataset.itemId}`,
+    title: `${offerDOM.querySelector('.offer-item-title').innerText}(${prefix})`,
+    price: offerDOM.querySelector('.offer-item-price').innerText.replace(/\D/g, ''),
+    href: offerDOM.dataset.url,
+    area: offerDOM.querySelector('.offer-item-area').innerText.replace(/\D/g, ''),
+    ui
+  }
+}
 
 export default {
   extractOffers,

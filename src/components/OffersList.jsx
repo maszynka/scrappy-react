@@ -28,6 +28,16 @@ class OffersList extends React.Component {
   render () {
     return (
       <div>
+        <style>
+          {`
+          .visited {
+            opacity: .7;
+          }
+          .visited a {
+            font-weight: normal;
+          }
+          `}
+        </style>
         {
           (Array.isArray(this.props.offers)) ? this.listOffers(this.props.offers) : ''
         }

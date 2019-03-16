@@ -2,7 +2,7 @@ import { ui } from './common'
 
 const _extract = {
   offersWrap: bodyContent => {
-    console.log(bodyContent.querySelector('#offers_table'))
+    // console.log(bodyContent.querySelector('#offers_table'))
     return bodyContent.querySelector('#offers_table')
   },
   offers: offersWrap => offersWrap.querySelectorAll('.offers .wrap')
@@ -10,17 +10,18 @@ const _extract = {
 
 export const extractOffers = bodyContent => {
   const offersWrap = _extract.offersWrap(bodyContent)
-  return offersWrap && _extract.offers(_extract.offersWrap(bodyContent))
+  return offersWrap ? _extract.offers(offersWrap) : null
 }
 
 export const makeOffer = offerDOM => {
   const titleEl = offerDOM.querySelector('a.link.linkWithHash strong')
   const priceEl = offerDOM.querySelector('p.price strong')
   const linkEl = offerDOM.querySelector('a.linkWithHash')
+  const prefix = 'olx'
 
   return {
-    id: `olx-${offerDOM.querySelector('.offer-wrapper table').dataset.id}`,
-    title: `${titleEl ? titleEl.innerText : 'could not find title element'}(olx)`,
+    id: `${prefix}-${offerDOM.querySelector('.offer-wrapper table').dataset.id}`,
+    title: `${titleEl ? titleEl.innerText : 'could not find title element'}(${prefix})`,
     price: priceEl ? priceEl.innerText.replace(/\D/g, '') : 'could not find price element',
     href: linkEl ? offerDOM.querySelector('a.linkWithHash').href : 'could not find link element',
     area: `N/A`,

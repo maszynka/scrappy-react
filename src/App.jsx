@@ -83,7 +83,7 @@ export default class App extends React.Component {
   getOffers (service) {
     return new Promise((resolve, reject) => {
       const url = `https://cors-anywhere.herokuapp.com/${service.url}`
-      xhrPromise('GET', url, settings.xhrAdditionalHeaders).then(response => {
+      xhrPromise(url, settings.xhr).then(response => {
         let fetchedOffers = prepareOffers(response, service.name)
 
         resolve(fetchedOffers)
@@ -207,9 +207,7 @@ export default class App extends React.Component {
   mutateOffer (offerId, mutation) {
     const index = this.state.offersList.map(offer => offer.id).indexOf(offerId)
 
-    if (index === -1) {
-      return false
-    }
+    if (index === -1) { return false }
 
     let mutatedOffersList = this.state.offersList.slice()
 
@@ -271,7 +269,6 @@ export default class App extends React.Component {
         }
       `}</style>
       </div>
-
     )
   }
 }

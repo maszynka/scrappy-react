@@ -5,5 +5,13 @@ export default {
   xhrAdditionalHeaders: {
     'X-Requested-With': 'XmlHttpRequest'
   },
-  offersCheckInterval: 1005000000 // ms
+  xhr: {
+    additionalHeaders: {
+      'X-Requested-With': 'XmlHttpRequest'
+    },
+    timeout: 1000 * 5,
+    method: 'GET',
+    corsProxyUrl: 'https://cors-anywhere.herokuapp.com/'
+  },
+  offersCheckInterval: 1005000000 // ms,
 }

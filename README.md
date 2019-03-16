@@ -19,7 +19,12 @@
      - Add notifiers:
         - When new offers matching filter cirteria appears
         - Decrement notifications amount when offers is beign viewed
-     
+        
+## Non-mvp
+ 1. Provide user-defined selectors using eval sandboxed in iframe as in example:     
+ https://developer.chrome.com/extensions/samples#sandboxed-frame
+  - provide all fields withing object of strings values
+  - access those values template literals
  
 ## License
 
