@@ -11,7 +11,7 @@ export default {
     },
     timeout: 1000 * 105,
     method: 'GET',
-    corsProxyUrl: 'https://cors-anywhere.herokuapp.com/'
+    corsProxyUrl: 'http://localhost:8080/' // https://cors-anywhere.herokuapp.com/'
   },
   offersCheckInterval: 1005000000 // ms,
 }

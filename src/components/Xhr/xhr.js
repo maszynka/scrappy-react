@@ -14,7 +14,8 @@ const xhrPromise = (
 ) => {
   return new Promise((resolve, reject) => {
     let req = new window.XMLHttpRequest()
-    url = settings.corsProxyUrl + url
+    const corsProxyUrl = (settings.env !== 'ext') ? settings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
+    url = corsProxyUrl + url
 
     req.open(settings.method, url, true)
     // req.setRequestHeader('X-Requested-With', 'XmlHttpRequest')
@@ -32,12 +33,12 @@ const xhrPromise = (
       }
     }
 
-    /* req.ontimeout = (e) => {
+    req.ontimeout = (e) => {
       console.error(
         `xhr request to ${url}, timed out (>${settings.timeout}. ${e}`)
     }
 
-    req.onerror = e => reject(new Error('XHR request has failed' + e)) */
+    req.onerror = e => reject(new Error('XHR request has failed' + e))
 
     req.send()
   })
