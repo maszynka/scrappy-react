@@ -82,7 +82,7 @@ export default class App extends React.Component {
 
   getOffers (service) {
     return new Promise((resolve, reject) => {
-      xhrPromise(service.url, settings.xhr).then(response => {
+      xhrPromise(service.url).then(response => {
         let fetchedOffers = prepareOffers(response, service.name)
 
         resolve(fetchedOffers)

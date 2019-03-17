@@ -1,3 +1,5 @@
+import settings from '../../../settings'
+
 /* let addAditionalHeadersToXhrReq = (req, additionalHeaders) => {
   for (var header in additionalHeaders) {
     if (additionalHeaders.hasOwnProperty(header)) {
@@ -10,17 +12,16 @@
 
 const xhrPromise = (
   url,
-  settings
+  xhrSettings = settings.xhr
 ) => {
   return new Promise((resolve, reject) => {
     let req = new window.XMLHttpRequest()
-    const corsProxyUrl = (settings.env !== 'ext') ? settings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
+    const corsProxyUrl = (xhrSettings.env !== 'ext') ? xhrSettings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
     url = corsProxyUrl + url
 
-    req.open(settings.method, url, true)
-    // req.setRequestHeader('X-Requested-With', 'XmlHttpRequest')
+    req.open(xhrSettings.method, url, true)
     // addAditionalHeadersToXhrReq(req, {} /* settings.additionalHeaders */)
-    // req.timeout = settings.timeout
+    req.timeout = xhrSettings.timeout
 
     req.onload = function () {
       if (this.status >= 200 && this.status < 300) {
@@ -35,7 +36,7 @@ const xhrPromise = (
 
     req.ontimeout = (e) => {
       console.error(
-        `xhr request to ${url}, timed out (>${settings.timeout}. ${e}`)
+        `xhr request to ${url}, timed out (>${xhrSettings.timeout}. ${e}`)
     }
 
     req.onerror = e => reject(new Error('XHR request has failed' + e))
