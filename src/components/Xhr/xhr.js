@@ -1,14 +1,12 @@
-let onError = (err, reject) => {
-  console.error('XHR request has failed', err)
-  reject()
-}
-let addAditionalHeadersToXhrReq = (req, additionalHeaders) => {
+/* let addAditionalHeadersToXhrReq = (req, additionalHeaders) => {
   for (var header in additionalHeaders) {
     if (additionalHeaders.hasOwnProperty(header)) {
-      req.setRequestHeader(header, additionalHeaders[header])
+      const value = additionalHeaders[header]
+      console.log(header, value)
+      req.setRequestHeader(header, value)
     }
   }
-}
+} */
 
 const xhrPromise = (
   url,
@@ -19,8 +17,9 @@ const xhrPromise = (
     url = settings.corsProxyUrl + url
 
     req.open(settings.method, url, true)
-    req.timeout = settings.timeout
-    addAditionalHeadersToXhrReq(req, settings.additionalHeaders)
+    // req.setRequestHeader('X-Requested-With', 'XmlHttpRequest')
+    // addAditionalHeadersToXhrReq(req, {} /* settings.additionalHeaders */)
+    // req.timeout = settings.timeout
 
     req.onload = function () {
       if (this.status >= 200 && this.status < 300) {
@@ -33,11 +32,12 @@ const xhrPromise = (
       }
     }
 
-    req.ontimeout = (e) => {
-      console.error(`xhr request to ${url}, timed out (>${settings.timeout}. ${e}`)
+    /* req.ontimeout = (e) => {
+      console.error(
+        `xhr request to ${url}, timed out (>${settings.timeout}. ${e}`)
     }
 
-    req.onerror = (err, reject) => onError(err, reject)
+    req.onerror = e => reject(new Error('XHR request has failed' + e)) */
 
     req.send()
   })

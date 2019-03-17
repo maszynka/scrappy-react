@@ -1,15 +1,15 @@
 /* global chrome */
 
 export default {
-  env: (typeof chrome.browserAction === 'object') ? 'ext' : 'web',
-  xhrAdditionalHeaders: {
-    'X-Requested-With': 'XmlHttpRequest'
-  },
+  env: (
+    typeof chrome === 'object' &&
+    typeof chrome.browserAction === 'object'
+  ) ? 'ext' : 'web',
   xhr: {
     additionalHeaders: {
       'X-Requested-With': 'XmlHttpRequest'
     },
-    timeout: 1000 * 15,
+    timeout: 1000 * 105,
     method: 'GET',
     corsProxyUrl: 'https://cors-anywhere.herokuapp.com/'
   },
