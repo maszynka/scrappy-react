@@ -62,7 +62,7 @@ export default class App extends React.Component {
         currentOffers
       ) : fetchedOffers
 
-      console.log(fetchedOffers, currentOffers)
+      // console.log(fetchedOffers, currentOffers)
 
       // console.log(newOffers)
       // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
@@ -89,7 +89,7 @@ export default class App extends React.Component {
       }).catch(reason => {
         console.log(reason)
         console.log('Xhr error (' + JSON.parse(reason) + ')')
-        reject(reason)
+        reject(new Error(reason))
       })
     })
   }
@@ -132,7 +132,9 @@ export default class App extends React.Component {
                 servicesFetched < (len - 1) ? servicesFetched++ : resolve(this.state.offersList)
               }
             )
-          )
+          ).catch(reason => {
+            console.error(reason)
+          })
         }
       })
     }

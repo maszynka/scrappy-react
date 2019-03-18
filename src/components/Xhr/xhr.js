@@ -1,4 +1,4 @@
-import settings from '../../../settings'
+import settings from '../../settings'
 
 /* let addAditionalHeadersToXhrReq = (req, additionalHeaders) => {
   for (var header in additionalHeaders) {
@@ -16,7 +16,7 @@ const xhrPromise = (
 ) => {
   return new Promise((resolve, reject) => {
     let req = new window.XMLHttpRequest()
-    const corsProxyUrl = (xhrSettings.env !== 'ext') ? xhrSettings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
+    const corsProxyUrl = (settings.env !== 'ext') ? xhrSettings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
     url = corsProxyUrl + url
 
     req.open(xhrSettings.method, url, true)
@@ -34,7 +34,7 @@ const xhrPromise = (
       }
     }
 
-    req.ontimeout = (e) => {
+    req.ontimeout = e => {
       console.error(
         `xhr request to ${url}, timed out (>${xhrSettings.timeout}. ${e}`)
     }
