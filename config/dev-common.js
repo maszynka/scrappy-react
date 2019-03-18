@@ -4,13 +4,9 @@ import cjs from 'rollup-plugin-commonjs'
 import globals from 'rollup-plugin-node-globals'
 import replace from 'rollup-plugin-replace'
 import resolve from 'rollup-plugin-node-resolve'
-import multiEntry from 'rollup-plugin-multi-entry'
 
-console.log(process.env.NODE_ENV)
-
-const common = {
+export default {
   plugins: [
-    multiEntry(),
     resolve({
       extensions: [ '.mjs', '.js', '.jsx', '.json' ],
       browser: true,
@@ -35,26 +31,3 @@ const common = {
   ],
   sourcemap: true
 }
-
-const app = {
-  input: 'src/index.js',
-  output: {
-    name: 'App',
-    file: 'build/' + process.env.NAME + '.js',
-    format: 'iife'
-  }
-}
-
-const background = {
-  input: 'src/background.js',
-  output: {
-    name: 'Background',
-    file: 'build/background.js',
-    format: 'iife'
-  }
-}
-
-export default [
-  Object.assign({}, app, common),
-  Object.assign({}, background, common)
-]
