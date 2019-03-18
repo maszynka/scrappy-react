@@ -9,5 +9,10 @@
   "plugins": [
     "@babel/plugin-external-helpers"
   ],
+  "env": {
+    "test": {
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
+  },
   "ignore": ["node_modules/**"]
 }
