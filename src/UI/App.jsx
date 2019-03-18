@@ -1,17 +1,11 @@
 import React from 'react'
-import xhrPromise from './components/Xhr/xhr'
 import storageApi from './components/Model/Storage/storage'
 import PriceFilter from './components/UI/Form/PriceFilter'
 import settings from './settings'
 
 // Offers
 import OffersList from './components/OffersList'
-import prepareOffers from './components/Model/Offers/prepare'
-// import updateCommon from './components/Model/Offers/updateCommon'
 import mergeNewOffers from './components/Model/Offers/mergeNew'
-import serviceOtodom from './components/Model/Service/otodom'
-import serviceMorizon from './components/Model/Service/morizon'
-import serviceOlx from './components/Model/Service/olx'
 
 // even though Rollup is bundling all your files together, errors and
 // logs will still point to your original source modules

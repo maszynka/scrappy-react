@@ -1,18 +1,17 @@
-import xhrPromise from './components/Xhr/xhr'
-import prepareOffers from './components/Model/Offers/prepare'
-import serviceOtodom from './components/Model/Service/otodom'
-import serviceMorizon from './components/Model/Service/morizon'
-import serviceOlx from './components/Model/Service/olx'
-import settings from './settings'
+// import xhrPromise from '../components/Xhr/xhr'
+import axios from 'axios'
+import prepareOffers from '../Model/Offers/prepare'
+import serviceOtodom from '../Model/Service/otodom'
+import serviceMorizon from '../Model/Service/morizon'
+import serviceOlx from '../Model/Service/olx'
+import settings from '../settings'
 
-export default function () {
-  return 'dupa'
-}
+const getOffers = service => {
+  const corsProxyUrl = (settings.env !== 'ext') ? xhrSettings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
+  const url = corsProxyUrl + service.url
 
-
-const getOffers => (service) {
   return new Promise((resolve, reject) => {
-    xhrPromise(service.url).then(response => {
+    axios.get(url).then(response => {
       let fetchedOffers = prepareOffers(response, service.name)
 
       resolve(fetchedOffers)
@@ -40,7 +39,7 @@ const getAllOffers = (services) => {
       const name = servicesNames[i]
       const service = services[name]
       Object.assign(service, { name })
-      this.getOffers(service).then(
+      getOffers(service).then(
         offers => this.storeNewOffers(offers, this.state.offersList).then(
           offers => {
             servicesFetched < (len - 1) ? servicesFetched++ : resolve(this.state.offersList)
@@ -63,4 +62,8 @@ const fullEventStack = (services) => {
 
 // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
 fullEventStack(services)
-window.setInterval(() => fullEventStack(services), settings.offersCheckInterval)
+
+window.setInterval(
+  () => fullEventStack(services),
+  settings.offersCheckInterval
+)

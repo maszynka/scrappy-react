@@ -1,4 +1,4 @@
-import settings from '../../../settings'
+import settings from '../../settings'
 
 /* global chrome */
 const notify = str => {
