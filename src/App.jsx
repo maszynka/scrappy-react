@@ -80,7 +80,7 @@ export default class App extends React.Component {
     })
   }
 
-  getOffers (service) {
+  /*getOffers (service) {
     return new Promise((resolve, reject) => {
       xhrPromise(service.url).then(response => {
         let fetchedOffers = prepareOffers(response, service.name)
@@ -92,7 +92,7 @@ export default class App extends React.Component {
         reject(new Error(reason))
       })
     })
-  }
+  }*/
 
   displayOffers (offers, callback) {
     this.setState({
@@ -110,46 +110,7 @@ export default class App extends React.Component {
       return oddRun ? otodom2 : otodom1
     } */
 
-    const services = {
-      otodom: serviceOtodom,
-      morizon: serviceMorizon,
-      olx: serviceOlx
-    }
 
-    const getAllOffers = (services) => {
-      return new Promise((resolve, reject) => {
-        const servicesNames = Object.keys(services).filter(name => services.hasOwnProperty(name))
-        const len = servicesNames.length
-        let servicesFetched = 0
-
-        for (let i = 0; i < len; i++) {
-          const name = servicesNames[i]
-          const service = services[name]
-          Object.assign(service, { name })
-          this.getOffers(service).then(
-            offers => this.storeNewOffers(offers, this.state.offersList).then(
-              offers => {
-                servicesFetched < (len - 1) ? servicesFetched++ : resolve(this.state.offersList)
-              }
-            )
-          ).catch(reason => {
-            console.error(reason)
-          })
-        }
-      })
-    }
-
-    const fullEventStack = (services) => {
-      getAllOffers(services).then(
-        offers => this.applyFilters(this.state.filters, offers).then(
-          matchingOffers => this.displayOffers(matchingOffers)
-        )
-      )
-    }
-
-    // this.getOffers(otodom1).then(offers => this.applyFilters(this.state.filters, offers))
-    fullEventStack(services)
-    window.setInterval(() => fullEventStack(services), settings.offersCheckInterval)
     // window.setTimeout(fullEventStack, settings.offersCheckInterval)
     // window.setTimeout(fullEventStack, 2*settings.offersCheckInterval)
   }
