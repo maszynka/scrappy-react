@@ -4,12 +4,12 @@ import mergeNew from './model/offers/mergeNew'
 
 import {
   ADD_OFFERS,
-  GET_OFFERS,
+  // GET_OFFERS,
   SET_OFFERS,
   MUTATE_OFFER,
   SET_FILTERED_OFFERS,
-  GET_FILTERED_OFFERS,
-  GET_FILTERS,
+  // GET_FILTERED_OFFERS,
+  // GET_FILTERS,
   SET_FILTER
 } from './actions'
 
@@ -39,7 +39,7 @@ export const offers = createReducer( initialState.offersList, {
     action.offers,
     offersListState.slice()
   ),
-  [GET_OFFERS]: (offersListState, action) => offersListState,
+  // [GET_OFFERS]: (offersListState, action) => offersListState,
   [MUTATE_OFFER]: (offersListState, action) => {
     //TODO: Move mutation there
     const index = offersListState.map(offer => offer.id).indexOf(action.id)
@@ -56,7 +56,7 @@ export const offers = createReducer( initialState.offersList, {
 })
 
 export const filteredOffers = createReducer( initialState.filteredOffersList, {
-  [GET_FILTERED_OFFERS]: (filteredOffersListState, action) => filteredOffersListState,
+  // [GET_FILTERED_OFFERS]: (filteredOffersListState, action) => filteredOffersListState,
   [SET_FILTERED_OFFERS]: (filteredOffersListState, action) => action.offers
 })
 
@@ -66,7 +66,7 @@ export const filters = createReducer( initialState.filters, {
       [action.name]: action.value
     })
   },
-  [GET_FILTERS]: (filtersState, action) => filtersState,
+  // [GET_FILTERS]: (filtersState, action) => filtersState,
 })
 
 const app = combineReducers({

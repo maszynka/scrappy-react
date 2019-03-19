@@ -21,9 +21,11 @@ export const setOffers = offers => ({
   offers
 })
 
+/*
 export const getOffers = () => ({
   type: GET_OFFERS
 })
+*/
 
 export const mutateOffer = (id, mutation) => ({
   type: MUTATE_OFFER,
@@ -32,9 +34,9 @@ export const mutateOffer = (id, mutation) => ({
 })
 
 //FilteredOffersList
-export const getFilteredOffers = () => ({
+/*export const getFilteredOffers = () => ({
   type: GET_FILTERED_OFFERS
-})
+})*/
 
 export const setFilteredOffers = offers => ({
   type: SET_FILTERED_OFFERS,
@@ -42,9 +44,9 @@ export const setFilteredOffers = offers => ({
 })
 
 //Filters
-export const getFilters = () => ({
+/*export const getFilters = () => ({
   type: GET_FILTERS
-})
+})*/
 
 export const setFilter = (name, value) => ({
   type: SET_FILTER,
