@@ -48,7 +48,7 @@ export default class App extends React.Component {
     * */
   }
 
-  storeNewOffers (fetchedOffers, currentOffers) {
+  /*storeNewOffers (fetchedOffers, currentOffers) {
     return new Promise((resolve, reject) => {
       const initial = !currentOffers.length
       let newOffers = !initial ? mergeNewOffers(
@@ -72,7 +72,7 @@ export default class App extends React.Component {
         offersList: newOffers
       }, resolve(newOffers))
     })
-  }
+  }*/
 
   /*getOffers (service) {
     return new Promise((resolve, reject) => {
@@ -90,8 +90,8 @@ export default class App extends React.Component {
 
   displayOffers (offers, callback) {
     this.setState({
-      visibleOffersList: offers,
-      visibleOffersCount: offers.length
+      filteredOffersList: offers,
+      filteredOffersCount: offers.length
     }, callback)
   }
 
@@ -186,7 +186,7 @@ export default class App extends React.Component {
           <PriceFilter name={'max'} placeholder={'Do'} initialValue={2000} setFilter={this.setFilter.bind(this)} />
           {
             this.state.offersList.length ? (
-              <OffersList offers={this.state.visibleOffersList} mutateOffer={this.mutateOffer.bind(this)} />
+              <OffersList offers={this.state.filteredOffersList} mutateOffer={this.mutateOffer.bind(this)} />
             ) : ''
           }
         </article>

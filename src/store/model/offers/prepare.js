@@ -1,6 +1,6 @@
-import cleanResponse from '../../Xhr/Data'
+import cleanResponse from '../../xhr/Data'
 import extractDOM from './extractDOM'
-import makeOffer from '../Offer/makeOffer'
+import makeOffer from '../offer/makeOffer'
 
 export default (response, service) => {
   const bodyContent = cleanResponse(response)

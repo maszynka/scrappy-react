@@ -29,6 +29,32 @@ const services = {
   olx: serviceOlx
 }
 
+const storeNewOffers = (fetchedOffers, currentOffers) => {
+  return new Promise((resolve, reject) => {
+    const initial = !currentOffers.length
+    let newOffers = !initial ? mergeNewOffers(
+      fetchedOffers,
+      currentOffers
+    ) : fetchedOffers
+
+    // console.log(fetchedOffers, currentOffers)
+
+    // console.log(newOffers)
+    // console.log(storageApi) // TODO: use internal consts of chrome.storage.sync to check if not writing to often
+
+    storageApi.setItem('offersList', JSON.stringify(newOffers), () => {
+      console.log('offersList is set to ' + newOffers)
+    })
+
+    console.log('storage is set : ' + !!storageApi.getItem('offersList'))
+
+    this.setState({
+      offersCount: newOffers.length,
+      offersList: newOffers
+    }, resolve(newOffers))
+  })
+}
+
 const getAllOffers = (services) => {
   return new Promise((resolve, reject) => {
     const servicesNames = Object.keys(services).filter(name => services.hasOwnProperty(name))
@@ -54,8 +80,8 @@ const getAllOffers = (services) => {
 
 const fullEventStack = (services) => {
   getAllOffers(services).then(
-    offers => this.applyFilters(this.state.filters, offers).then(
-      matchingOffers => this.displayOffers(matchingOffers)
+    offers => applyFilters(this.state.filters, offers).then(
+      matchingOffers => displayOffers(matchingOffers)
     )
   )
 }
@@ -67,3 +93,61 @@ window.setInterval(
   () => fullEventStack(services),
   settings.offersCheckInterval
 )
+
+const displayOffers = ()=> {
+  /*
+  * TODO: send message to api.js with visible offers
+  * */
+}
+
+const applyFilters = (filters) => {
+  return new Promise((resolve, reject) => {
+    const inRange = value => {
+      return (
+        filters.min === '' || (filters.min !== '' && filters.min <= value)
+      ) && (
+        filters.max === '' || (filters.max !== '' && filters.max >= value)
+      )
+    }
+    !this.state.offersList && console.log('offersList empty filtering canceled')
+
+    const matchingOffers = this.state.offersList.filter(
+      offer => inRange(parseInt(offer.price))
+    )
+
+    resolve(matchingOffers)
+  })
+}
+
+const setFilter = (name, value) => {
+  const newFilter = this.state.filters
+  newFilter[name] = parseInt(value)
+
+  this.setState(
+    {
+      filter: { newFilter }
+    },
+    () => {
+      console.log('it runs')
+      this.applyFilters(this.state.filters, this.state.offersList).then(
+        matchingOffers => this.displayOffers(matchingOffers)
+      )
+    }
+  )
+}
+
+const mutateOffer = (offerId, mutation) => {
+  const index = this.state.offersList.map(offer => offer.id).indexOf(offerId)
+
+  if (index === -1) { return false }
+
+  let mutatedOffersList = this.state.offersList.slice()
+
+  Object.assign(mutatedOffersList[index], mutation)
+
+  this.setState(
+    {
+      offersList: mutatedOffersList
+    }
+  )
+}

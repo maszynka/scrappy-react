@@ -70,6 +70,7 @@
     "build": "rollup -c config/prod.js",
     "prebuild:dev": "npm run std --silent",
     "build:app:dev": "rollup -c config/dev-app.js",
+    "build:store:dev": "rollup -c config/dev-store.js",
     "build:background:dev": "rollup -c config/dev-background.js",
     "build:dev": "npm-run-all build:app:dev build:background:dev",
     "browse": "browser-sync start --s --ss build --index html/index-dev.html --files html/**/*.html,build/**/*.js --no-notify",
