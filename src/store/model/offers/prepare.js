@@ -1,4 +1,4 @@
-import cleanResponse from '../../xhr/Data'
+import cleanResponse from './cleanResponse'
 import extractDOM from './extractDOM'
 import makeOffer from '../offer/makeOffer'
 

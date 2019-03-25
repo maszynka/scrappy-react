@@ -4,7 +4,7 @@ export default {
   env: (
     typeof chrome === 'object' &&
     typeof chrome.browserAction === 'object'
-  ) ? 'ext' : 'web',
+  ) ? 'ext' : 'ext',//'web',
   xhr: {
     additionalHeaders: {
       'X-Requested-With': 'XmlHttpRequest'

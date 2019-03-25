@@ -2,7 +2,7 @@
 import common from './dev-common'
 
 const background = {
-  input: 'src/background.js',
+  input: 'src/background/background.js',
   output: {
     name: 'Background',
     file: 'build/background.js',

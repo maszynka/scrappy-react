@@ -1,23 +1,31 @@
-// import xhrPromise from '../components/Xhr/xhr'
-import axios from 'axios'
-import prepareOffers from '../Model/Offers/prepare'
-import serviceOtodom from '../Model/Service/otodom'
-import serviceMorizon from '../Model/Service/morizon'
-import serviceOlx from '../Model/Service/olx'
+import xhrPromise from './xhr/xhr'
+// import * as axios from 'axios'
+import prepareOffers from '../store/model/offers/prepare'
+import serviceOtodom from '../store/model/service/otodom'
+import serviceMorizon from '../store/model/service/morizon'
+import serviceOlx from '../store/model/service/olx'
 import settings from '../settings'
 
+import store from '../store/store'
+import {
+  addOffers,
+  setOffers,
+  mutateOffer,
+  setFilteredOffers,
+  setFilter
+} from '../store/actions'
+
 const getOffers = service => {
-  const corsProxyUrl = (settings.env !== 'ext') ? xhrSettings.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
+  const corsProxyUrl = (settings.env !== 'ext') ? settings.xhr.corsProxyUrl : '' // Same origin policy is disabled in extension so proxy is not needed
   const url = corsProxyUrl + service.url
 
   return new Promise((resolve, reject) => {
-    axios.get(url).then(response => {
+    xhrPromise(url).then(response => {
       let fetchedOffers = prepareOffers(response, service.name)
 
       resolve(fetchedOffers)
     }).catch(reason => {
-      console.log(reason)
-      console.log('Xhr error (' + JSON.parse(reason) + ')')
+        console.log('Xhr error (' + JSON.parse(reason) + ')')
       reject(new Error(reason))
     })
   })
@@ -31,7 +39,7 @@ const services = {
 
 const storeNewOffers = (fetchedOffers, currentOffers) => {
   return new Promise((resolve, reject) => {
-    const initial = !currentOffers.length
+    const initial = !currentOffers || currentOffers.length === 0
     let newOffers = !initial ? mergeNewOffers(
       fetchedOffers,
       currentOffers
@@ -48,10 +56,9 @@ const storeNewOffers = (fetchedOffers, currentOffers) => {
 
     console.log('storage is set : ' + !!storageApi.getItem('offersList'))
 
-    this.setState({
-      offersCount: newOffers.length,
-      offersList: newOffers
-    }, resolve(newOffers))
+    return store.dispatch(addOffers(
+      newOffers
+    ))
   })
 }
 
@@ -66,9 +73,9 @@ const getAllOffers = (services) => {
       const service = services[name]
       Object.assign(service, { name })
       getOffers(service).then(
-        offers => this.storeNewOffers(offers, this.state.offersList).then(
-          offers => {
-            servicesFetched < (len - 1) ? servicesFetched++ : resolve(this.state.offersList)
+        newOffers => storeNewOffers(newOffers, store.getState().offersList).then(
+          updatedOffers => {
+            servicesFetched < (len - 1) ? servicesFetched++ : resolve(updatedOffers)
           }
         )
       ).catch(reason => {
@@ -80,8 +87,12 @@ const getAllOffers = (services) => {
 
 const fullEventStack = (services) => {
   getAllOffers(services).then(
-    offers => applyFilters(this.state.filters, offers).then(
-      matchingOffers => displayOffers(matchingOffers)
+    offers => applyFilters(store.getState().filters, offers).then(
+      matchingOffers => {
+        store.dispatch(setOffers(matchingOffers))
+        matchingOffers => displayOffers(matchingOffers)
+      }
+
     )
   )
 }
@@ -109,9 +120,11 @@ const applyFilters = (filters) => {
         filters.max === '' || (filters.max !== '' && filters.max >= value)
       )
     }
-    !this.state.offersList && console.log('offersList empty filtering canceled')
+    !store.getState().offersList && console.log('offersList empty filtering canceled')
 
-    const matchingOffers = this.state.offersList.filter(
+    store.dispatch(setFilter())
+
+    const matchingOffers = store.getState().offersList.filter(
       offer => inRange(parseInt(offer.price))
     )
 
@@ -119,9 +132,12 @@ const applyFilters = (filters) => {
   })
 }
 
-const setFilter = (name, value) => {
-  const newFilter = this.state.filters
+/*const setFilter = (name, value) => {
+  const newFilter = store.getState().filters
   newFilter[name] = parseInt(value)
+
+  store.dispatch(setFilter(name))
+
 
   this.setState(
     {
@@ -129,14 +145,14 @@ const setFilter = (name, value) => {
     },
     () => {
       console.log('it runs')
-      this.applyFilters(this.state.filters, this.state.offersList).then(
+      applyFilters(store.getState().filters, store.getState().offersList).then(
         matchingOffers => this.displayOffers(matchingOffers)
       )
     }
   )
-}
+}*/
 
-const mutateOffer = (offerId, mutation) => {
+/*const _mutateOffer = (offerId, mutation) => {
   const index = this.state.offersList.map(offer => offer.id).indexOf(offerId)
 
   if (index === -1) { return false }
@@ -150,4 +166,4 @@ const mutateOffer = (offerId, mutation) => {
       offersList: mutatedOffersList
     }
   )
-}
+}*/
